@@ -148,16 +148,33 @@ function App() {
             <div className="animate-in fade-in slide-in-from-bottom-8 duration-500">
               
               {/* Original Perfume Header */}
-              <div className="bg-white rounded-3xl p-8 mb-8 shadow-sm border border-luxury-100 flex flex-col sm:flex-row items-center sm:items-start gap-6">
+              <div className="bg-white rounded-3xl p-8 mb-8 shadow-sm border border-luxury-100 flex flex-col sm:flex-row items-center sm:items-start gap-6 relative overflow-hidden">
                 <div className="w-32 h-32 bg-luxury-50 rounded-2xl border border-luxury-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                   {/* Placeholder for perfume image */}
-                   <Sparkles className="text-luxury-300" size={40} />
+                   {original.image_url ? (
+                     <img src={original.image_url} alt={original.name} className="w-full h-full object-cover" />
+                   ) : (
+                     <Sparkles className="text-luxury-300" size={40} />
+                   )}
                 </div>
-                <div className="text-center sm:text-left flex-1">
+                <div className="text-center sm:text-left flex-1 w-full">
                   <div className="inline-block px-3 py-1 bg-luxury-100 text-luxury-700 text-xs font-bold tracking-wider uppercase rounded-full mb-3">Original</div>
                   <h2 className="font-serif text-3xl font-bold text-luxury-900 mb-1">{original.name}</h2>
                   <p className="text-luxury-600 text-lg mb-4">by {original.brand}</p>
-                  <p className="text-2xl text-luxury-900 font-semibold">${parseFloat(original.price).toFixed(2)} <span className="text-sm font-normal text-luxury-400">Retail</span></p>
+                  <p className="text-2xl text-luxury-900 font-semibold mb-4">${parseFloat(original.price).toFixed(2)} <span className="text-sm font-normal text-luxury-400">Retail</span></p>
+                </div>
+                
+                {/* Original Buy Button */}
+                <div className="flex flex-col items-center justify-center border-t sm:border-t-0 sm:border-l border-luxury-100 w-full sm:w-auto pt-6 sm:pt-0 sm:pl-8">
+                  {original.affiliate_link && (
+                    <a 
+                      href={original.affiliate_link}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="w-full flex items-center justify-center gap-2 bg-white border-2 border-luxury-900 text-luxury-900 hover:bg-luxury-50 px-6 py-3 rounded-xl font-medium transition-colors whitespace-nowrap"
+                    >
+                      Buy Original <ExternalLink size={16} />
+                    </a>
+                  )}
                 </div>
               </div>
 
@@ -177,8 +194,17 @@ function App() {
                       
                       {/* Top Match Badge */}
                       {index === 0 && (
-                        <div className="absolute top-0 right-0 bg-gold text-white text-xs font-bold px-3 py-1 rounded-bl-xl">Top Match</div>
+                        <div className="absolute top-0 right-0 bg-gold text-white text-xs font-bold px-3 py-1 rounded-bl-xl z-10">Top Match</div>
                       )}
+
+                      {/* Dupe Image */}
+                      <div className="w-24 h-24 sm:w-28 sm:h-28 bg-luxury-50 rounded-xl border border-luxury-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                         {dupe.image_url ? (
+                           <img src={dupe.image_url} alt={dupe.name} className="w-full h-full object-cover" />
+                         ) : (
+                           <Sparkles className="text-luxury-300" size={32} />
+                         )}
+                      </div>
 
                       <div className="flex-1 text-center sm:text-left w-full">
                         <h4 className="text-xl font-bold text-luxury-900 mb-1">{dupe.name}</h4>
@@ -207,9 +233,9 @@ function App() {
                           href={dupe.affiliate_link || "#"}
                           target="_blank"
                           rel="noreferrer"
-                          className="w-full flex items-center justify-center gap-2 bg-luxury-900 hover:bg-gold text-white px-6 py-3 rounded-xl font-medium transition-colors"
+                          className="w-full flex items-center justify-center gap-2 bg-luxury-900 hover:bg-gold text-white px-6 py-3 rounded-xl font-medium transition-colors whitespace-nowrap"
                         >
-                          Buy Now <ExternalLink size={16} />
+                          Buy Dupe <ExternalLink size={16} />
                         </a>
                       </div>
                     </div>
