@@ -34,5 +34,5 @@ To prevent "context rot" and token limits, we strictly adhere to ICM:
 
 ## Progress Tracker
 - [x] **Stage 1:** Visual Prototype (Search Bar & Conditional UI) Built and running on localhost.
-- [ ] **Stage 2:** Connect to Supabase for the database.
-- [ ] **Stage 3:** Push the repository to GitHub.
+- [x] **Stage 2:** Connect to Supabase for the database.
+- [x] **Stage 3:** Push the repository to GitHub.

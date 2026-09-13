@@ -1,36 +1,46 @@
 import React, { useState } from 'react';
 import { Search, Image as ImageIcon, AlertTriangle, Wrench, X } from 'lucide-react';
-
-// Hardcoded dummy data for Stage 1
-const DUMMY_DATABASE = {
-  "ERR-404": {
-    code: "ERR-404",
-    description: "Pitch Ram Pressure Low. Hydraulic fluid level is below operational threshold in the main accumulator.",
-    fix: "1. Inspect main hydraulic lines for leaks.\n2. Verify accumulator charge.\n3. Top up hydraulic fluid to nominal levels.",
-    hasDiagram: true
-  },
-  "TEMP-99": {
-    code: "TEMP-99",
-    description: "Generator Overheat. Stator winding temperature exceeds 120°C.",
-    fix: "1. Check cooling fan operation.\n2. Verify coolant flow rate.\n3. Inspect radiator fins for debris.",
-    hasDiagram: false
-  }
-};
+import { supabase } from './supabaseClient';
 
 function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [result, setResult] = useState(null);
   const [hasSearched, setHasSearched] = useState(false);
   const [showDiagram, setShowDiagram] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
     if (!searchTerm.trim()) return;
     
     setHasSearched(true);
-    const found = DUMMY_DATABASE[searchTerm.toUpperCase()];
-    setResult(found || null);
+    setLoading(true);
+    setError(null);
+    setResult(null);
     setShowDiagram(false);
+
+    try {
+      const { data, error } = await supabase
+        .from('fault_codes')
+        .select('*')
+        .ilike('code', searchTerm.trim())
+        .single();
+
+      if (error) {
+        if (error.code === 'PGRST116') { // No rows found
+          setResult(null);
+        } else {
+          setError(error.message);
+        }
+      } else {
+        setResult(data);
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -62,7 +72,21 @@ function App() {
 
       {/* Results Container */}
       <div className="w-full max-w-2xl">
-        {hasSearched && result && (
+        {loading && (
+          <div className="text-center py-12">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-industrial-accent"></div>
+            <p className="text-gray-400 mt-4">Searching database...</p>
+          </div>
+        )}
+
+        {error && (
+          <div className="bg-industrial-800 border border-red-900/50 rounded-2xl p-8 text-center mb-6">
+            <h2 className="text-2xl font-semibold text-red-400 mb-2">Error</h2>
+            <p className="text-gray-400">{error}</p>
+          </div>
+        )}
+
+        {hasSearched && !loading && !error && result && (
           <div className="bg-industrial-800 border border-industrial-700 rounded-2xl p-8 shadow-2xl animate-in fade-in slide-in-from-bottom-4">
             
             <div className="flex items-start justify-between mb-6">
@@ -86,7 +110,7 @@ function App() {
             </div>
 
             {/* Conditional Diagram Button */}
-            {result.hasDiagram && (
+            {result.has_diagram && (
               <button 
                 onClick={() => setShowDiagram(true)}
                 className="w-full py-4 bg-industrial-700 hover:bg-industrial-600 text-white rounded-xl flex items-center justify-center gap-2 transition-colors font-medium"
@@ -98,7 +122,7 @@ function App() {
           </div>
         )}
 
-        {hasSearched && !result && (
+        {hasSearched && !loading && !error && !result && (
           <div className="bg-industrial-800 border border-red-900/50 rounded-2xl p-8 text-center">
             <h2 className="text-2xl font-semibold text-red-400 mb-2">Code Not Found</h2>
             <p className="text-gray-400">No diagnostic information found for "{searchTerm}". Please verify the code and try again.</p>
