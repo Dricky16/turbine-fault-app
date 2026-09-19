@@ -47,21 +47,23 @@ function App() {
     try {
       let targetOriginalId = null;
 
-      // 1. First, try searching the 'perfumes' table (Originals)
+      // 1. First, try searching the 'perfumes' table (Originals) by name OR brand
       const { data: perfumeData, error: perfumeError } = await supabase
         .from('perfumes')
         .select('id')
-        .ilike('name', `%${searchTerm.trim()}%`)
+        .or(`name.ilike.%${searchTerm.trim()}%,brand.ilike.%${searchTerm.trim()}%`)
+        .limit(1)
         .maybeSingle();
 
       if (perfumeData) {
         targetOriginalId = perfumeData.id;
       } else {
-        // 2. If not found in originals, search the 'dupes' table
+        // 2. If not found in originals, search the 'dupes' table by name OR brand
         const { data: dupeData, error: dupeError } = await supabase
           .from('dupes')
           .select('original_id')
-          .ilike('name', `%${searchTerm.trim()}%`)
+          .or(`name.ilike.%${searchTerm.trim()}%,brand.ilike.%${searchTerm.trim()}%`)
+          .limit(1)
           .maybeSingle();
           
         if (dupeData) {
