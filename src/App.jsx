@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, Sparkles, ExternalLink, Camera, ArrowRight, ShieldCheck, Percent, Tag } from 'lucide-react';
 import { supabase } from './supabaseClient';
 
@@ -9,6 +9,30 @@ function App() {
   const [hasSearched, setHasSearched] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  
+  // Currency state
+  const [currency, setCurrency] = useState({ symbol: '€', code: 'EUR', rate: 1 });
+
+  // Detect location and set currency on load
+  useEffect(() => {
+    fetch('https://ipapi.co/json/')
+      .then(res => res.json())
+      .then(data => {
+        if (data.country_code === 'GB') {
+          // If in the UK, switch to GBP and apply approximate exchange rate (EUR to GBP)
+          setCurrency({ symbol: '£', code: 'GBP', rate: 0.85 });
+        } else if (data.country_code === 'US') {
+          // If in the US, switch to USD
+          setCurrency({ symbol: '$', code: 'USD', rate: 1.08 });
+        }
+        // Defaults to EUR (rate 1) for Ireland and others
+      })
+      .catch(err => console.error("GeoIP Error:", err));
+  }, []);
+
+  const formatPrice = (price) => {
+    return currency.symbol + (parseFloat(price) * currency.rate).toFixed(2);
+  };
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -160,7 +184,7 @@ function App() {
                   <div className="inline-block px-3 py-1 bg-luxury-100 text-luxury-700 text-xs font-bold tracking-wider uppercase rounded-full mb-3">Original</div>
                   <h2 className="font-serif text-3xl font-bold text-luxury-900 mb-1">{original.name}</h2>
                   <p className="text-luxury-600 text-lg mb-4">by {original.brand}</p>
-                  <p className="text-2xl text-luxury-900 font-semibold mb-4">${parseFloat(original.price).toFixed(2)} <span className="text-sm font-normal text-luxury-400">Retail</span></p>
+                  <p className="text-2xl text-luxury-900 font-semibold mb-4">{formatPrice(original.price)} <span className="text-sm font-normal text-luxury-400">Retail</span></p>
                 </div>
                 
                 {/* Original Buy Button */}
@@ -220,14 +244,14 @@ function App() {
                           {/* Savings Badge */}
                           <div className="flex items-center gap-1.5 bg-luxury-100 text-luxury-800 px-3 py-1.5 rounded-lg text-sm font-semibold border border-luxury-200">
                             <Tag size={16} />
-                            Save ${(parseFloat(original.price) - parseFloat(dupe.price)).toFixed(2)}
+                            Save {formatPrice(parseFloat(original.price) - parseFloat(dupe.price))}
                           </div>
                         </div>
                       </div>
 
                       <div className="flex flex-col items-center justify-center border-t sm:border-t-0 sm:border-l border-luxury-100 w-full sm:w-auto pt-6 sm:pt-0 sm:pl-8">
                         <div className="text-3xl font-bold text-luxury-900 mb-3">
-                          ${parseFloat(dupe.price).toFixed(2)}
+                          {formatPrice(dupe.price)}
                         </div>
                         <a 
                           href={dupe.affiliate_link || "#"}
