@@ -45,32 +45,50 @@ function App() {
     setDupes([]);
 
     try {
-      // 1. Search for the original perfume
+      let targetOriginalId = null;
+
+      // 1. First, try searching the 'perfumes' table (Originals)
       const { data: perfumeData, error: perfumeError } = await supabase
         .from('perfumes')
-        .select('*')
+        .select('id')
         .ilike('name', `%${searchTerm.trim()}%`)
-        .single();
+        .maybeSingle();
 
-      if (perfumeError) {
-        if (perfumeError.code === 'PGRST116') {
-          // Not found
-          setOriginal(null);
-        } else {
-          throw perfumeError;
-        }
+      if (perfumeData) {
+        targetOriginalId = perfumeData.id;
       } else {
-        setOriginal(perfumeData);
+        // 2. If not found in originals, search the 'dupes' table
+        const { data: dupeData, error: dupeError } = await supabase
+          .from('dupes')
+          .select('original_id')
+          .ilike('name', `%${searchTerm.trim()}%`)
+          .maybeSingle();
+          
+        if (dupeData) {
+          targetOriginalId = dupeData.original_id;
+        }
+      }
+
+      // 3. If we found a matching ID, fetch the full data
+      if (targetOriginalId) {
+        const { data: finalOriginal } = await supabase
+          .from('perfumes')
+          .select('*')
+          .eq('id', targetOriginalId)
+          .single();
+          
+        setOriginal(finalOriginal);
         
-        // 2. If found, fetch its dupes
-        const { data: dupesData, error: dupesError } = await supabase
+        const { data: finalDupes } = await supabase
           .from('dupes')
           .select('*')
-          .eq('original_id', perfumeData.id)
+          .eq('original_id', targetOriginalId)
           .order('similarity_match', { ascending: false });
           
-        if (dupesError) throw dupesError;
-        setDupes(dupesData || []);
+        setDupes(finalDupes || []);
+      } else {
+        // Nothing found at all
+        setOriginal(null);
       }
     } catch (err) {
       setError("An error occurred while searching. Please try again.");
