@@ -9,6 +9,7 @@ function App() {
   const [hasSearched, setHasSearched] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [allPerfumes, setAllPerfumes] = useState([]);
   
   // Currency state
   const [currency, setCurrency] = useState({ symbol: '€', code: 'EUR', rate: 1 });
@@ -19,15 +20,22 @@ function App() {
       .then(res => res.json())
       .then(data => {
         if (data.country_code === 'GB') {
-          // If in the UK, switch to GBP and apply approximate exchange rate (EUR to GBP)
           setCurrency({ symbol: '£', code: 'GBP', rate: 0.85 });
         } else if (data.country_code === 'US') {
-          // If in the US, switch to USD
           setCurrency({ symbol: '$', code: 'USD', rate: 1.08 });
         }
-        // Defaults to EUR (rate 1) for Ireland and others
       })
       .catch(err => console.error("GeoIP Error:", err));
+      
+    // Fetch all premium perfumes for the home screen
+    const fetchPerfumes = async () => {
+      const { data } = await supabase
+        .from('perfumes')
+        .select('*')
+        .order('name', { ascending: true });
+      if (data) setAllPerfumes(data);
+    };
+    fetchPerfumes();
   }, []);
 
   const formatPrice = (price) => {
@@ -111,23 +119,34 @@ function App() {
       {/* Navigation */}
       <nav className="p-6 flex justify-between items-center max-w-5xl mx-auto">
         <div className="flex items-center gap-2">
+          {/* Logo icon kept small in corner, title moved to center */}
           <Sparkles className="text-gold" size={24} />
-          <span className="font-serif font-bold text-2xl tracking-tight text-luxury-900">Scents for Cents</span>
         </div>
-        <button className="text-sm font-medium text-luxury-700 hover:text-luxury-900 transition-colors">
-          Sign In
-        </button>
+        <div className="flex items-center gap-4">
+          <button className="text-sm font-medium text-luxury-700 hover:text-luxury-900 transition-colors hidden sm:block">
+            Sign In
+          </button>
+          <button 
+            onClick={() => alert("To install the app, tap 'Share' then 'Add to Home Screen' on your phone!")}
+            className="bg-luxury-900 text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-gold transition-colors shadow-sm"
+          >
+            Download App
+          </button>
+        </div>
       </nav>
 
       {/* Hero Section */}
-      <main className="flex flex-col items-center pt-16 pb-24 px-4 max-w-5xl mx-auto">
+      <main className="flex flex-col items-center pt-4 pb-24 px-4 max-w-5xl mx-auto">
         
-        <div className="text-center mb-10 max-w-2xl">
-          <h1 className="font-serif text-5xl md:text-6xl text-luxury-900 mb-6 leading-tight">
+        <div className="text-center mb-10 max-w-3xl">
+          <h1 className="font-serif text-5xl md:text-6xl text-luxury-900 mb-4 leading-tight flex items-center justify-center gap-4">
+            Scents for Cents
+          </h1>
+          <h2 className="font-serif text-4xl md:text-5xl text-luxury-800 mb-6 leading-tight">
             Luxury Fragrances, <br/>
             <span className="italic text-gold-dark">Without the Premium Price.</span>
-          </h1>
-          <p className="text-luxury-700 text-lg md:text-xl font-light">
+          </h2>
+          <p className="text-luxury-700 text-lg md:text-xl font-light max-w-2xl mx-auto">
             Search for your favorite high-end designer perfume, and we'll reveal the closest, most affordable clones and dupes.
           </p>
         </div>
@@ -161,6 +180,25 @@ function App() {
         {/* Results Area */}
         <div className="w-full max-w-4xl">
           
+          {!hasSearched && !loading && (
+            <div className="w-full animate-in fade-in duration-500">
+              <h3 className="font-serif text-2xl text-luxury-900 font-semibold mb-6 text-center">Available Fragrances</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                {allPerfumes.map((perfume) => (
+                  <div key={perfume.id} className="bg-white border border-luxury-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow text-center flex flex-col justify-between">
+                    <div>
+                      <h4 className="font-serif text-lg font-bold text-luxury-900 mb-1">{perfume.name}</h4>
+                      <p className="text-luxury-600 text-sm mb-4">by {perfume.brand}</p>
+                    </div>
+                    <div className="text-xl font-semibold text-luxury-900">
+                      {formatPrice(perfume.price)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {loading && (
             <div className="flex flex-col items-center justify-center py-20">
               <div className="w-10 h-10 border-4 border-luxury-200 border-t-gold rounded-full animate-spin mb-4"></div>
