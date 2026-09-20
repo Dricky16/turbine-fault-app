@@ -357,14 +357,20 @@ function App() {
                         <div className="text-3xl font-bold text-luxury-900 mb-3">
                           {formatPrice(dupe.price)}
                         </div>
-                        <a 
-                          href={dupe.affiliate_link || "#"}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="w-full flex items-center justify-center gap-2 bg-luxury-900 hover:bg-gold text-white px-6 py-3 rounded-xl font-medium transition-colors whitespace-nowrap"
-                        >
-                          Buy Dupe <ExternalLink size={16} />
-                        </a>
+                        {['Aldi', 'Lidl'].includes(dupe.brand) ? (
+                          <div className="w-full flex items-center justify-center gap-2 bg-luxury-100 text-luxury-600 px-6 py-3 rounded-xl font-medium whitespace-nowrap cursor-not-allowed">
+                            Available In-Store Only
+                          </div>
+                        ) : (
+                          <a 
+                            href={dupe.affiliate_link || "#"}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="w-full flex items-center justify-center gap-2 bg-luxury-900 hover:bg-gold text-white px-6 py-3 rounded-xl font-medium transition-colors whitespace-nowrap"
+                          >
+                            Buy Dupe <ExternalLink size={16} />
+                          </a>
+                        )}
                       </div>
                     </div>
                   ))}
