@@ -38,14 +38,16 @@ function App() {
     fetchPerfumes();
   }, []);
 
+  const [visibleCount, setVisibleCount] = useState(15);
+
   const formatPrice = (price) => {
     return currency.symbol + (parseFloat(price) * currency.rate).toFixed(2);
   };
 
-  const handleSearch = async (e) => {
-    e.preventDefault();
-    if (!searchTerm.trim()) return;
+  const executeSearch = async (term) => {
+    if (!term.trim()) return;
     
+    setSearchTerm(term);
     setHasSearched(true);
     setLoading(true);
     setError(null);
@@ -59,7 +61,7 @@ function App() {
       const { data: perfumeData, error: perfumeError } = await supabase
         .from('perfumes')
         .select('id')
-        .or(`name.ilike.%${searchTerm.trim()}%,brand.ilike.%${searchTerm.trim()}%`)
+        .or(`name.ilike.%${term.trim()}%,brand.ilike.%${term.trim()}%`)
         .limit(1)
         .maybeSingle();
 
@@ -70,7 +72,7 @@ function App() {
         const { data: dupeData, error: dupeError } = await supabase
           .from('dupes')
           .select('original_id')
-          .or(`name.ilike.%${searchTerm.trim()}%,brand.ilike.%${searchTerm.trim()}%`)
+          .or(`name.ilike.%${term.trim()}%,brand.ilike.%${term.trim()}%`)
           .limit(1)
           .maybeSingle();
           
@@ -106,6 +108,15 @@ function App() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    executeSearch(searchTerm);
+  };
+
+  const handleLoadMore = () => {
+    setVisibleCount(prev => prev + 15);
   };
 
   const handleCameraClick = () => {
@@ -184,9 +195,23 @@ function App() {
             <div className="w-full animate-in fade-in duration-500">
               <h3 className="font-serif text-2xl text-luxury-900 font-semibold mb-6 text-center">Available Fragrances</h3>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                {allPerfumes.map((perfume) => (
-                  <div key={perfume.id} className="bg-white border border-luxury-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow text-center flex flex-col justify-between">
-                    <div>
+                {allPerfumes.slice(0, visibleCount).map((perfume) => (
+                  <div 
+                    key={perfume.id} 
+                    onClick={() => {
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                      executeSearch(perfume.name);
+                    }}
+                    className="bg-white border border-luxury-200 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-gold transition-all cursor-pointer text-center flex flex-col items-center justify-between group"
+                  >
+                    <div className="w-24 h-24 mb-4 bg-luxury-50 rounded-xl border border-luxury-100 flex items-center justify-center overflow-hidden flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
+                      {perfume.image_url ? (
+                        <img src={perfume.image_url} alt={perfume.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <Sparkles className="text-luxury-300" size={32} />
+                      )}
+                    </div>
+                    <div className="w-full">
                       <h4 className="font-serif text-lg font-bold text-luxury-900 mb-1">{perfume.name}</h4>
                       <p className="text-luxury-600 text-sm mb-4">by {perfume.brand}</p>
                     </div>
@@ -196,6 +221,16 @@ function App() {
                   </div>
                 ))}
               </div>
+              {visibleCount < allPerfumes.length && (
+                <div className="mt-10 flex justify-center">
+                  <button 
+                    onClick={handleLoadMore}
+                    className="bg-white border-2 border-luxury-200 text-luxury-800 px-8 py-3 rounded-full font-medium hover:border-gold hover:text-luxury-900 transition-colors"
+                  >
+                    See More Fragrances
+                  </button>
+                </div>
+              )}
             </div>
           )}
 
@@ -243,6 +278,11 @@ function App() {
                   <h2 className="font-serif text-3xl font-bold text-luxury-900 mb-1">{original.name}</h2>
                   <p className="text-luxury-600 text-lg mb-4">by {original.brand}</p>
                   <p className="text-2xl text-luxury-900 font-semibold mb-4">{formatPrice(original.price)} <span className="text-sm font-normal text-luxury-400">Retail</span></p>
+                  {original.notes && (
+                    <div className="bg-luxury-50 p-4 rounded-xl border border-luxury-100 mt-2">
+                      <p className="text-sm text-luxury-800"><span className="font-bold">Notes:</span> {original.notes}</p>
+                    </div>
+                  )}
                 </div>
                 
                 {/* Original Buy Button */}
@@ -292,7 +332,7 @@ function App() {
                         <h4 className="text-xl font-bold text-luxury-900 mb-1">{dupe.name}</h4>
                         <p className="text-luxury-600 mb-4">by {dupe.brand}</p>
                         
-                        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4">
+                        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 mb-3">
                           {/* Similarity Badge */}
                           <div className="flex items-center gap-1.5 bg-green-50 text-green-700 px-3 py-1.5 rounded-lg text-sm font-semibold border border-green-100">
                             <ShieldCheck size={16} />
@@ -305,6 +345,12 @@ function App() {
                             Save {formatPrice(parseFloat(original.price) - parseFloat(dupe.price))}
                           </div>
                         </div>
+
+                        {dupe.notes && (
+                          <div className="bg-white p-3 rounded-xl border border-luxury-100 text-left">
+                            <p className="text-xs text-luxury-800"><span className="font-bold">Notes:</span> {dupe.notes}</p>
+                          </div>
+                        )}
                       </div>
 
                       <div className="flex flex-col items-center justify-center border-t sm:border-t-0 sm:border-l border-luxury-100 w-full sm:w-auto pt-6 sm:pt-0 sm:pl-8">
