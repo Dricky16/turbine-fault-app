@@ -170,7 +170,7 @@ function App() {
         console.warn("Primary model failed, attempting fallback...", primaryErr);
         // Fallback to older stable model if the new one is too busy
         response = await ai.models.generateContent({
-          model: 'gemini-1.5-flash',
+          model: 'gemini-3.5-flash',
           contents: [
             {
               role: 'user',
