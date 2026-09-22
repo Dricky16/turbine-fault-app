@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Sparkles, ExternalLink, Camera, ArrowRight, ShieldCheck, Percent, Tag } from 'lucide-react';
 import { supabase } from './supabaseClient';
+import CameraScanner from './CameraScanner';
 
 function App() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -10,6 +11,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [allPerfumes, setAllPerfumes] = useState([]);
+  const [showCamera, setShowCamera] = useState(false);
   
   // Currency state
   const [currency, setCurrency] = useState({ symbol: '€', code: 'EUR', rate: 1 });
@@ -120,12 +122,33 @@ function App() {
   };
 
   const handleCameraClick = () => {
-    // Placeholder for Premium Camera Feature
-    alert("Camera Scan Feature coming soon! (Premium Only)");
+    setShowCamera(true);
+  };
+
+  const handleCapture = async (imageData) => {
+    setShowCamera(false);
+    // Placeholder for Gemini integration
+    setLoading(true);
+    setHasSearched(true);
+    setError(null);
+    setOriginal(null);
+    setDupes([]);
+    
+    // Simulate AI processing time
+    setTimeout(() => {
+      setLoading(false);
+      setError("AI connection not established yet. Ready for Gemini API!");
+    }, 2000);
   };
 
   return (
     <div className="min-h-screen bg-luxury-50 text-luxury-950 font-sans selection:bg-gold-light selection:text-luxury-950">
+      {showCamera && (
+        <CameraScanner 
+          onClose={() => setShowCamera(false)}
+          onCapture={handleCapture}
+        />
+      )}
       
       {/* Navigation */}
       <nav className="p-6 flex justify-between items-center max-w-5xl mx-auto">
