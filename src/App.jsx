@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Search, Sparkles, ExternalLink, Camera, ArrowRight, ShieldCheck, Percent, Tag } from 'lucide-react';
 import { supabase } from './supabaseClient';
 import CameraScanner from './CameraScanner';
+import { GoogleGenAI } from '@google/genai';
 
 function App() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -127,18 +128,61 @@ function App() {
 
   const handleCapture = async (imageData) => {
     setShowCamera(false);
-    // Placeholder for Gemini integration
     setLoading(true);
     setHasSearched(true);
     setError(null);
     setOriginal(null);
     setDupes([]);
     
-    // Simulate AI processing time
-    setTimeout(() => {
+    try {
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+      if (!apiKey) {
+        throw new Error("Gemini API key is missing. Please add it to your .env.local file.");
+      }
+
+      const ai = new GoogleGenAI({ apiKey: apiKey });
+
+      // Convert base64 data URL (data:image/jpeg;base64,...) to raw base64 string
+      const base64Data = imageData.split(',')[1];
+
+      const response = await ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: [
+          {
+            role: 'user',
+            parts: [
+              {
+                text: "Analyze this image of a perfume bottle. What is the exact brand name and the perfume name? Respond ONLY with the name of the perfume. For example, if it is 'Chanel No 5', respond with exactly 'Chanel No 5'. Do not include the brand name unless it is part of the fragrance name. If you absolutely cannot identify it, respond with 'UNKNOWN'."
+              },
+              {
+                inlineData: {
+                  mimeType: 'image/jpeg',
+                  data: base64Data
+                }
+              }
+            ]
+          }
+        ]
+      });
+
+      const identifiedName = response.text.trim();
+      
+      if (identifiedName === 'UNKNOWN') {
+        setError("Could not clearly identify the perfume. Please try taking a clearer photo.");
+        setLoading(false);
+        return;
+      }
+
+      console.log("Identified perfume:", identifiedName);
+      
+      // Execute the normal search flow using the AI's answer
+      await executeSearch(identifiedName);
+
+    } catch (err) {
+      console.error("AI processing error:", err);
+      setError(err.message || "An error occurred while analyzing the image. Please try again.");
       setLoading(false);
-      setError("AI connection not established yet. Ready for Gemini API!");
-    }, 2000);
+    }
   };
 
   return (
