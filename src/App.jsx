@@ -11,6 +11,7 @@ function App() {
   const [dupes, setDupes] = useState([]);
   const [hasSearched, setHasSearched] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [region, setRegion] = useState('IE'); // 'IE' or 'UK'
   const [error, setError] = useState(null);
   const [allPerfumes, setAllPerfumes] = useState([]);
   const [showCamera, setShowCamera] = useState(false);
@@ -20,6 +21,16 @@ function App() {
   const [profile, setProfile] = useState(null);
 
   useEffect(() => {
+    // Auto-detect region
+    fetch('https://ipapi.co/json/')
+      .then(res => res.json())
+      .then(data => {
+        if (data.country_code === 'GB') {
+          setRegion('UK');
+        }
+      })
+      .catch(err => console.log('Geolocation skipped'));
+
     // Check if we just returned from a successful Stripe checkout
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('success') === 'true') {
@@ -254,6 +265,22 @@ function App() {
           <Sparkles className="text-gold" size={24} />
         </div>
         <div className="flex items-center gap-4">
+          
+          {/* Region Toggle */}
+          <div className="flex bg-luxury-100 rounded-full p-1 mr-2 border border-luxury-200">
+            <button 
+              onClick={() => setRegion('IE')}
+              className={`px-3 py-1 rounded-full text-xs font-bold transition-colors ${region === 'IE' ? 'bg-white shadow text-luxury-900' : 'text-luxury-500 hover:text-luxury-700'}`}
+            >
+              🇮🇪 IE
+            </button>
+            <button 
+              onClick={() => setRegion('UK')}
+              className={`px-3 py-1 rounded-full text-xs font-bold transition-colors ${region === 'UK' ? 'bg-white shadow text-luxury-900' : 'text-luxury-500 hover:text-luxury-700'}`}
+            >
+              🇬🇧 UK
+            </button>
+          </div>
           {session ? (
             <button 
               onClick={() => supabase.auth.signOut()}
