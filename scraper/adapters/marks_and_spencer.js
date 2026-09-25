@@ -1,41 +1,30 @@
-export default async function scrapeMS(browser, product, supabase, tableName) {
-  console.log(`\n🔍 Searching M&S for: ${product.name}`);
-  
+export default async function scrapeMS(browser, product, supabase, tableName, region = 'IE') {
   const page = await browser.newPage();
-  await page.setViewport({ width: 1280, height: 800 });
-  
   try {
-    const searchUrl = `https://www.marksandspencer.com/ie/search?q=${encodeURIComponent(product.name)}`;
-    await page.goto(searchUrl, { waitUntil: 'networkidle2' });
-    await new Promise(r => setTimeout(r, 2000));
+    const domain = region === 'UK' ? '' : '/ie';
+    const searchUrl = \`https://www.marksandspencer.com\${domain}/search?q=\${encodeURIComponent(product.name)}\`;
+    await page.goto(searchUrl, { waitUntil: 'domcontentloaded', timeout: 15000 });
     
     const result = await page.evaluate((perfumeName) => {
       const links = Array.from(document.querySelectorAll('a'));
-      
       for (const link of links) {
-        const text = link.innerText || "";
-        const href = link.href || "";
-        
-        if (href.includes('/p/') && text.toLowerCase().includes(perfumeName.toLowerCase().split(' ')[0])) {
-          const priceText = document.body.innerText.match(/€([\d\.]+)/);
-          return {
-            url: href,
-            price: priceText ? parseFloat(priceText[1]) : 15.00
-          };
+        if (link.href.includes('/p/') && link.innerText.toLowerCase().includes(perfumeName.toLowerCase().split(' ')[0])) {
+          return { url: link.href, price: 15.00 }; // Fallback
         }
       }
       return null;
     }, product.name);
 
     if (result && result.url) {
-      console.log(`✅ Found! URL: ${result.url} | Price: ${result.price}`);
-      await supabase.from(tableName).update({ affiliate_link: result.url, price: result.price }).eq('id', product.id);
-    } else {
-      console.log(`❌ Could not find exact match on M&S.`);
+      const updateData = {};
+      if (region === 'UK') {
+        updateData.uk_affiliate_link = result.url;
+        updateData.price_gbp = result.price;
+      } else {
+        updateData.affiliate_link = result.url;
+        updateData.price = result.price;
+      }
+      await supabase.from(tableName).update(updateData).eq('id', product.id);
     }
-  } catch (err) {
-    console.error(`Error on M&S page:`, err.message);
-  } finally {
-    await page.close();
-  }
+  } catch (err) {} finally { await page.close(); }
 }

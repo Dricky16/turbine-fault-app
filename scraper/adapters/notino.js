@@ -1,56 +1,75 @@
-export default async function scrapeNotino(browser, product, supabase, tableName) {
-  console.log(`\n🔍 Searching Notino for: ${product.brand} ${product.name}`);
+export default async function scrapeNotino(browser, product, supabase, tableName, region = 'IE') {
+  console.log(\`\\n🔍 Searching Notino (\${region}) for: \${product.brand} \${product.name}\`);
   
   const page = await browser.newPage();
   await page.setViewport({ width: 1280, height: 800 });
   
   try {
-    // Fix duplicate brand names (e.g., "Tom Ford Tom Ford Tobacco Vanille")
     let cleanName = product.name;
     if (cleanName.toLowerCase().startsWith(product.brand.toLowerCase())) {
       cleanName = cleanName.substring(product.brand.length).trim();
     }
-    const searchTerm = `${product.brand} ${cleanName}`;
-    const searchUrl = `https://www.notino.ie/search/?q=${encodeURIComponent(searchTerm)}`;
+    const searchTerm = \`\${product.brand} \${cleanName}\`;
     
-    await page.goto(searchUrl, { waitUntil: 'networkidle2' });
-    await new Promise(r => setTimeout(r, 2000)); // Wait for JS rendering
+    const domain = region === 'UK' ? 'co.uk' : 'ie';
+    const searchUrl = \`https://www.notino.\${domain}/search/?q=\${encodeURIComponent(searchTerm)}\`;
     
-    const result = await page.evaluate((brandName) => {
+    await page.goto(searchUrl, { waitUntil: 'domcontentloaded', timeout: 15000 });
+    await new Promise(r => setTimeout(r, 2000));
+    
+    const result = await page.evaluate((brandName, region) => {
       const links = Array.from(document.querySelectorAll('a'));
+      const currencySymbol = region === 'UK' ? '£' : '€';
       
       for (const link of links) {
         const text = link.innerText || "";
-        // Look for the brand name and a euro symbol
-        if (text.toLowerCase().includes(brandName.toLowerCase()) && text.includes('€')) {
-           const priceMatch = text.match(/([\d\.]+)\n*€/);
+        if (text.toLowerCase().includes(brandName.toLowerCase()) && text.includes(currencySymbol)) {
+           const regex = region === 'UK' ? /£([\\d\\.]+)/ : /([\\d\\.]+)\\n*€/;
+           const priceMatch = text.match(regex);
+           
+           // Try to find image
+           let imgUrl = null;
+           const img = link.querySelector('img');
+           if (img) {
+             imgUrl = img.src;
+           }
+           
            if (priceMatch) {
              return {
                url: link.href,
-               price: parseFloat(priceMatch[1])
+               price: parseFloat(priceMatch[1]),
+               img: imgUrl
              };
            }
         }
       }
       return null;
-    }, product.brand);
+    }, product.brand, region);
 
     if (result && result.url) {
-      console.log(`✅ Found! URL: ${result.url} | Price: €${result.price}`);
+      console.log(\`✅ Found! URL: \${result.url} | Price: \${region === 'UK' ? '£' : '€'}\${result.price}\`);
       
-      // Save to database
-      await supabase
-        .from(tableName)
-        .update({ 
-           affiliate_link: result.url,
-           price: result.price
-        })
-        .eq('id', product.id);
+      const updateData = {};
+      if (region === 'UK') {
+        updateData.uk_affiliate_link = result.url;
+        updateData.price_gbp = result.price;
+      } else {
+        updateData.affiliate_link = result.url;
+        updateData.price = result.price;
+      }
+      
+      // Update image if we found a high quality one
+      if (result.img && result.img.includes('notinoimg.com')) {
+        updateData.image_url = result.img;
+        console.log(\`   📸 Extracted Image: \${result.img.substring(0, 50)}...\`);
+      }
+      
+      await supabase.from(tableName).update(updateData).eq('id', product.id);
     } else {
-      console.log(`❌ Could not find exact match.`);
+      console.log(\`❌ Could not find exact match.\`);
     }
   } catch (err) {
-    console.error(`Error on Notino page:`, err.message);
+    console.error(\`Error on Notino page:\`, err.message);
   } finally {
     await page.close();
   }

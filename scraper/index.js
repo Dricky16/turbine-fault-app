@@ -55,9 +55,9 @@ async function run() {
   // --- Process Originals (All via Notino) ---
   console.log("\n--- Scraping Originals (via Notino) ---");
   for (const orig of originals) {
-    // Only scrape if it's a designer brand
     try {
-      await scrapeNotino(browser, orig, supabase, 'perfumes');
+      await scrapeNotino(browser, orig, supabase, 'perfumes', 'IE');
+      await scrapeNotino(browser, orig, supabase, 'perfumes', 'UK');
     } catch (err) {
       console.error(`❌ Error scraping ${orig.name}:`, err.message);
     }
@@ -70,20 +70,25 @@ async function run() {
       const brand = dupe.brand.toLowerCase();
       
       if (brand.includes("zara")) {
-        await scrapeZara(browser, dupe, supabase, 'dupes');
+        await scrapeZara(browser, dupe, supabase, 'dupes', 'IE');
+        await scrapeZara(browser, dupe, supabase, 'dupes', 'UK');
       }
       else if (brand.includes("superdrug")) {
-        await scrapeSuperdrug(browser, dupe, supabase, 'dupes');
+        await scrapeSuperdrug(browser, dupe, supabase, 'dupes', 'IE');
+        await scrapeSuperdrug(browser, dupe, supabase, 'dupes', 'UK');
       }
       else if (brand.includes("next")) {
-        await scrapeNext(browser, dupe, supabase, 'dupes');
+        await scrapeNext(browser, dupe, supabase, 'dupes', 'IE');
+        await scrapeNext(browser, dupe, supabase, 'dupes', 'UK');
       }
       else if (brand.includes("marks") || brand.includes("m&s") || brand.includes("spencer")) {
-        await scrapeMS(browser, dupe, supabase, 'dupes');
+        await scrapeMS(browser, dupe, supabase, 'dupes', 'IE');
+        await scrapeMS(browser, dupe, supabase, 'dupes', 'UK');
       }
-      else if (brand.includes("lattafa") || brand.includes("armaf") || brand.includes("afnan")) {
+      else if (brand.includes("lattafa") || brand.includes("armaf") || brand.includes("afnan") || brand.includes("maison alhambra") || brand.includes("fragrance world")) {
         // Middle eastern clones usually sold on Notino
-        await scrapeNotino(browser, dupe, supabase, 'dupes');
+        await scrapeNotino(browser, dupe, supabase, 'dupes', 'IE');
+        await scrapeNotino(browser, dupe, supabase, 'dupes', 'UK');
       }
       // In-store only brands
       else if (brand.includes("lidl") || brand.includes("aldi") || brand.includes("primark")) {
