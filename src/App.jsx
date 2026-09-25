@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Sparkles, ExternalLink, Camera, ArrowRight, ShieldCheck, Percent, Tag } from 'lucide-react';
+import { Search, Sparkles, ExternalLink, Camera, ArrowRight, ShieldCheck, Percent, Tag, User } from 'lucide-react';
+import AuthModal from './AuthModal';
 import { supabase } from './supabaseClient';
 import CameraScanner from './CameraScanner';
 
