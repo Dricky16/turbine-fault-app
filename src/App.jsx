@@ -31,8 +31,10 @@ function App() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ userId: uId })
         }).then(() => {
-          // Remove the query string
+          // Remove the query string immediately so it doesn't double-fire
           window.history.replaceState({}, document.title, window.location.pathname);
+          // Update the local state instantly so the camera unlocks without a refresh!
+          setProfile(prev => prev ? { ...prev, tier: 'premium' } : { id: uId, tier: 'premium' });
           alert('Payment Successful! You are now a Premium Member. You can use the camera!');
         });
       }
