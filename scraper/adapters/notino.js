@@ -5,7 +5,12 @@ export default async function scrapeNotino(browser, product, supabase, tableName
   await page.setViewport({ width: 1280, height: 800 });
   
   try {
-    const searchTerm = `${product.brand} ${product.name}`;
+    // Fix duplicate brand names (e.g., "Tom Ford Tom Ford Tobacco Vanille")
+    let cleanName = product.name;
+    if (cleanName.toLowerCase().startsWith(product.brand.toLowerCase())) {
+      cleanName = cleanName.substring(product.brand.length).trim();
+    }
+    const searchTerm = `${product.brand} ${cleanName}`;
     const searchUrl = `https://www.notino.ie/search/?q=${encodeURIComponent(searchTerm)}`;
     
     await page.goto(searchUrl, { waitUntil: 'networkidle2' });
