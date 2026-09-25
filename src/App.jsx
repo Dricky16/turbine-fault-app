@@ -21,7 +21,14 @@ function App() {
 
   useEffect(() => {
     const fetchProfile = async (userId) => {
-      const { data } = await supabase.from('profiles').select('*').eq('id', userId).single();
+      let { data } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle();
+      
+      // If profile doesn't exist yet, auto-create it
+      if (!data) {
+        const { data: newProfile, error } = await supabase.from('profiles').insert([{ id: userId, tier: 'free' }]).select().single();
+        if (!error) data = newProfile;
+      }
+      
       if (data) setProfile(data);
     };
 
