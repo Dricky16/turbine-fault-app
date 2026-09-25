@@ -1,7 +1,32 @@
 import React from 'react';
 import { X, Sparkles, CheckCircle2, Lock } from 'lucide-react';
 
-export default function PaywallModal({ isOpen, onClose }) {
+import { useState } from 'react';
+
+export default function PaywallModal({ isOpen, onClose, userId }) {
+  const [loading, setLoading] = useState(false);
+  
+  const handleUpgrade = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('http://localhost:3001/api/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId })
+      });
+      const data = await response.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert("Error creating checkout session.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error connecting to server.");
+    } finally {
+      setLoading(false);
+    }
+  };
   if (!isOpen) return null;
 
   return (
@@ -42,10 +67,11 @@ export default function PaywallModal({ isOpen, onClose }) {
           </ul>
 
           <button
-            onClick={() => alert('Stripe Checkout coming next!')}
+            onClick={handleUpgrade}
+            disabled={loading}
             className="w-full bg-gold-500 text-luxury-950 py-4 px-4 rounded-xl font-bold text-lg hover:bg-gold-400 focus:ring-4 focus:ring-gold-200 transition-all shadow-lg"
           >
-            Upgrade to Premium — €4.99/mo
+            {loading ? 'Redirecting to secure checkout...' : 'Upgrade to Premium — €4.99/mo'}
           </button>
           
           <p className="text-center text-xs text-luxury-400 mt-4">

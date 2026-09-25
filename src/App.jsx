@@ -20,6 +20,24 @@ function App() {
   const [profile, setProfile] = useState(null);
 
   useEffect(() => {
+    // Check if we just returned from a successful Stripe checkout
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('success') === 'true') {
+      const uId = urlParams.get('userId');
+      if (uId) {
+        // Upgrade them via our backend shortcut
+        fetch('http://localhost:3001/api/upgrade-success', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: uId })
+        }).then(() => {
+          // Remove the query string
+          window.history.replaceState({}, document.title, window.location.pathname);
+          alert('Payment Successful! You are now a Premium Member. You can use the camera!');
+        });
+      }
+    }
+
     const fetchProfile = async (userId) => {
       let { data } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle();
       
@@ -219,7 +237,7 @@ function App() {
   return (
     <div className="min-h-screen bg-luxury-50 text-luxury-950 font-sans selection:bg-gold-light selection:text-luxury-950">
       <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
-      <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} />
+      <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} userId={session?.user?.id} />
       {showCamera && (
         <CameraScanner 
           onClose={() => setShowCamera(false)}
