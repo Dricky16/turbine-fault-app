@@ -12,6 +12,18 @@ function App() {
   const [error, setError] = useState(null);
   const [allPerfumes, setAllPerfumes] = useState([]);
   const [showCamera, setShowCamera] = useState(false);
+  const [session, setSession] = useState(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
   
   // Currency state
   const [currency, setCurrency] = useState({ symbol: '€', code: 'EUR', rate: 1 });
@@ -122,6 +134,10 @@ function App() {
   };
 
   const handleCameraClick = () => {
+    if (!session) {
+      setShowAuthModal(true);
+      return;
+    }
     setShowCamera(true);
   };
 
@@ -171,6 +187,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-luxury-50 text-luxury-950 font-sans selection:bg-gold-light selection:text-luxury-950">
+      <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
       {showCamera && (
         <CameraScanner 
           onClose={() => setShowCamera(false)}
