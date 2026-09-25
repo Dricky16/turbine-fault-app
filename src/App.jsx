@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Sparkles, ExternalLink, Camera, ArrowRight, ShieldCheck, Percent, Tag, User } from 'lucide-react';
 import AuthModal from './AuthModal';
+import PaywallModal from './PaywallModal';
 import { supabase } from './supabaseClient';
 import CameraScanner from './CameraScanner';
 
@@ -15,14 +16,29 @@ function App() {
   const [showCamera, setShowCamera] = useState(false);
   const [session, setSession] = useState(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
+  const [profile, setProfile] = useState(null);
 
   useEffect(() => {
+    const fetchProfile = async (userId) => {
+      const { data } = await supabase.from('profiles').select('*').eq('id', userId).single();
+      if (data) setProfile(data);
+    };
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
+      if (session?.user) fetchProfile(session.user.id);
     });
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
+      if (session?.user) {
+        fetchProfile(session.user.id);
+      } else {
+        setProfile(null);
+      }
     });
+
     return () => subscription.unsubscribe();
   }, []);
   
@@ -139,6 +155,13 @@ function App() {
       setShowAuthModal(true);
       return;
     }
+    
+    // If no profile exists yet, or they are on the free tier, show paywall
+    if (!profile || profile.tier !== 'premium') {
+      setShowPaywall(true);
+      return;
+    }
+
     setShowCamera(true);
   };
 
@@ -189,6 +212,7 @@ function App() {
   return (
     <div className="min-h-screen bg-luxury-50 text-luxury-950 font-sans selection:bg-gold-light selection:text-luxury-950">
       <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+      <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} />
       {showCamera && (
         <CameraScanner 
           onClose={() => setShowCamera(false)}
