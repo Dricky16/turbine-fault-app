@@ -8,6 +8,9 @@ import path from 'path';
 // Import adapters (we will build these next)
 import scrapeNotino from './adapters/notino.js';
 import scrapeZara from './adapters/zara.js';
+import scrapeSuperdrug from './adapters/superdrug.js';
+import scrapeNext from './adapters/next.js';
+import scrapeMS from './adapters/marks_and_spencer.js';
 
 puppeteer.use(StealthPlugin());
 
@@ -68,7 +71,16 @@ async function run() {
       
       if (brand.includes("zara")) {
         await scrapeZara(browser, dupe, supabase, 'dupes');
-      } 
+      }
+      else if (brand.includes("superdrug")) {
+        await scrapeSuperdrug(browser, dupe, supabase, 'dupes');
+      }
+      else if (brand.includes("next")) {
+        await scrapeNext(browser, dupe, supabase, 'dupes');
+      }
+      else if (brand.includes("marks") || brand.includes("m&s") || brand.includes("spencer")) {
+        await scrapeMS(browser, dupe, supabase, 'dupes');
+      }
       else if (brand.includes("lattafa") || brand.includes("armaf") || brand.includes("afnan")) {
         // Middle eastern clones usually sold on Notino
         await scrapeNotino(browser, dupe, supabase, 'dupes');
