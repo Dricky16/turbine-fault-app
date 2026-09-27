@@ -312,7 +312,7 @@ function App() {
             </button>
           )}
           <button 
-            onClick={() => alert("To install the app, tap 'Share' then 'Add to Home Screen' on your phone!")}
+            onClick={() => alert("To install the app:\n\nOn iPhone: Tap the Share button (square with arrow) at the bottom, then scroll down to 'Add to Home Screen'\n\nOn Android: Tap the 3-dot menu at the top right, then select 'Add to Home screen' or 'Install app'")}
             className="bg-luxury-900 text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-gold transition-colors shadow-sm"
           >
             Download App
