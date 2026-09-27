@@ -486,7 +486,7 @@ function App() {
                 <div className="flex flex-col items-center justify-center border-t sm:border-t-0 sm:border-l border-luxury-100 w-full sm:w-auto pt-6 sm:pt-0 sm:pl-8">
                   
                     <a 
-                      href={(region === 'UK' ? original.uk_affiliate_link : original.affiliate_link) || original.affiliate_link || `https://www.google.com/search?q=${encodeURIComponent('Buy ' + original.brand + ' ' + original.name + ' perfume ' + (region === 'UK' ? 'UK' : 'Ireland'))}`}
+                      href={(region === 'UK' ? original.uk_affiliate_link : original.affiliate_link) || original.affiliate_link || `https://www.notino.${region === 'UK' ? 'co.uk' : 'ie'}/search/?q=${encodeURIComponent(original.brand + ' ' + original.name)}`}
                       target="_blank"
                       rel="noreferrer"
                       className="w-full flex items-center justify-center gap-2 bg-white border-2 border-luxury-900 text-luxury-900 hover:bg-luxury-50 px-6 py-3 rounded-xl font-medium transition-colors whitespace-nowrap"
@@ -559,7 +559,7 @@ function App() {
                           </div>
                         ) : (
                           <a 
-                            href={(region === 'UK' ? dupe.uk_affiliate_link : dupe.affiliate_link) || dupe.affiliate_link || `https://www.google.com/search?q=${encodeURIComponent('Buy ' + dupe.brand + ' ' + dupe.name + ' perfume ' + (region === 'UK' ? 'UK' : 'Ireland'))}`}
+                            href={(region === 'UK' ? dupe.uk_affiliate_link : dupe.affiliate_link) || dupe.affiliate_link || `https://www.notino.${region === 'UK' ? 'co.uk' : 'ie'}/search/?q=${encodeURIComponent(dupe.brand + ' ' + dupe.name)}`}
                             target="_blank"
                             rel="noreferrer"
                             className="w-full flex items-center justify-center gap-2 bg-luxury-900 hover:bg-gold text-white px-6 py-3 rounded-xl font-medium transition-colors whitespace-nowrap"
