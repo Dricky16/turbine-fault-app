@@ -3,14 +3,10 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
-  event.waitUntil(clients.claim());
+  event.waitUntil(self.clients.claim());
 });
 
 self.addEventListener('fetch', (event) => {
-  // Very basic fetch handler for PWA installability requirements
-  event.respondWith(
-    fetch(event.request).catch(() => {
-      return new Response('Offline content here');
-    })
-  );
+  // Pass-through fetch for PWA requirement
+  event.respondWith(fetch(event.request).catch(() => new Response('Offline')));
 });
