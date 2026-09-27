@@ -2,7 +2,7 @@ export default async function scrapeMS(browser, product, supabase, tableName, re
   const page = await browser.newPage();
   try {
     const domain = region === 'UK' ? '' : '/ie';
-    const searchUrl = \`https://www.marksandspencer.com\${domain}/search?q=\${encodeURIComponent(product.name)}\`;
+    const searchUrl = `https://www.marksandspencer.com${domain}/search?q=${encodeURIComponent(product.name)}`;
     await page.goto(searchUrl, { waitUntil: 'domcontentloaded', timeout: 15000 });
     
     const result = await page.evaluate((perfumeName) => {

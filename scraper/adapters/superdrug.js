@@ -1,8 +1,8 @@
 export default async function scrapeSuperdrug(browser, product, supabase, tableName, region = 'IE') {
-  console.log(\`\\n🔍 Searching Superdrug (\${region}) for: \${product.name}\`);
+  console.log(`\n🔍 Searching Superdrug (${region}) for: ${product.name}`);
   const page = await browser.newPage();
   try {
-    const searchUrl = \`https://www.superdrug.com/search?q=\${encodeURIComponent(product.name)}\`;
+    const searchUrl = `https://www.superdrug.com/search?q=${encodeURIComponent(product.name)}`;
     await page.goto(searchUrl, { waitUntil: 'domcontentloaded', timeout: 15000 });
     await new Promise(r => setTimeout(r, 2000));
     
@@ -28,7 +28,7 @@ export default async function scrapeSuperdrug(browser, product, supabase, tableN
     }, product.name);
 
     if (result && result.url) {
-      console.log(\`✅ Found! URL: \${result.url}\`);
+      console.log(`✅ Found! URL: ${result.url}`);
       const updateData = {};
       if (region === 'UK') {
         updateData.uk_affiliate_link = result.url;

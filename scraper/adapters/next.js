@@ -2,7 +2,7 @@ export default async function scrapeNext(browser, product, supabase, tableName, 
   const page = await browser.newPage();
   try {
     const domain = region === 'UK' ? 'co.uk' : 'ie';
-    const searchUrl = \`https://www.next.\${domain}/en/search?w=\${encodeURIComponent(product.name)}\`;
+    const searchUrl = `https://www.next.${domain}/en/search?w=${encodeURIComponent(product.name)}`;
     await page.goto(searchUrl, { waitUntil: 'domcontentloaded', timeout: 15000 });
     
     const result = await page.evaluate((perfumeName) => {

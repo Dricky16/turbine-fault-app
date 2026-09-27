@@ -4,6 +4,8 @@ import AuthModal from './AuthModal';
 import PaywallModal from './PaywallModal';
 import { supabase } from './supabaseClient';
 import CameraScanner from './CameraScanner';
+import RequestModal from './RequestModal';
+import { Filter } from 'lucide-react';
 
 function App() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -19,6 +21,8 @@ function App() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
   const [profile, setProfile] = useState(null);
+  const [showRequestModal, setShowRequestModal] = useState(false);
+  const [sortMode, setSortMode] = useState('name-asc');
 
   useEffect(() => {
     // Auto-detect region
@@ -247,9 +251,18 @@ function App() {
     }
   };
 
+  const sortedPerfumes = [...allPerfumes].sort((a, b) => {
+    if (sortMode === 'name-asc') return a.name.localeCompare(b.name);
+    if (sortMode === 'brand-asc') return a.brand.localeCompare(b.brand);
+    if (sortMode === 'price-asc') return parseFloat(a.price) - parseFloat(b.price);
+    if (sortMode === 'price-desc') return parseFloat(b.price) - parseFloat(a.price);
+    return 0;
+  });
+
   return (
     <div className="min-h-screen bg-luxury-50 text-luxury-950 font-sans selection:bg-gold-light selection:text-luxury-950">
       <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+      <RequestModal isOpen={showRequestModal} onClose={() => setShowRequestModal(false)} />
       <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} userId={session?.user?.id} />
       {showCamera && (
         <CameraScanner 
@@ -354,9 +367,32 @@ function App() {
           
           {!hasSearched && !loading && (
             <div className="w-full animate-in fade-in duration-500">
-              <h3 className="font-serif text-2xl text-luxury-900 font-semibold mb-6 text-center">Available Fragrances</h3>
+              <div className="flex flex-col sm:flex-row items-center justify-between mb-8 pb-4 border-b border-luxury-200">
+                <h3 className="font-serif text-3xl text-luxury-900 font-bold mb-4 sm:mb-0">Available Scents</h3>
+                <div className="flex items-center gap-4">
+                  <div className="relative">
+                    <select
+                      value={sortMode}
+                      onChange={(e) => setSortMode(e.target.value)}
+                      className="appearance-none bg-white border border-luxury-200 text-luxury-800 py-2.5 pl-4 pr-10 rounded-xl font-medium focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold cursor-pointer"
+                    >
+                      <option value="name-asc">A-Z (Name)</option>
+                      <option value="brand-asc">A-Z (Brand)</option>
+                      <option value="price-asc">Price (Low to High)</option>
+                      <option value="price-desc">Price (High to Low)</option>
+                    </select>
+                    <Filter className="absolute right-3 top-1/2 -translate-y-1/2 text-luxury-400 pointer-events-none" size={16} />
+                  </div>
+                  <button 
+                    onClick={() => setShowRequestModal(true)}
+                    className="bg-luxury-900 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-gold transition-colors shadow-sm whitespace-nowrap"
+                  >
+                    Request Scent
+                  </button>
+                </div>
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                {allPerfumes.slice(0, visibleCount).map((perfume) => (
+                {sortedPerfumes.slice(0, visibleCount).map((perfume) => (
                   <div 
                     key={perfume.id} 
                     onClick={() => {
@@ -382,7 +418,7 @@ function App() {
                   </div>
                 ))}
               </div>
-              {visibleCount < allPerfumes.length && (
+              {visibleCount < sortedPerfumes.length && (
                 <div className="mt-10 flex justify-center">
                   <button 
                     onClick={handleLoadMore}
@@ -448,7 +484,7 @@ function App() {
                 
                 {/* Original Buy Button */}
                 <div className="flex flex-col items-center justify-center border-t sm:border-t-0 sm:border-l border-luxury-100 w-full sm:w-auto pt-6 sm:pt-0 sm:pl-8">
-                  {original.affiliate_link && (
+                  
                     <a 
                       href={(region === 'UK' ? original.uk_affiliate_link : original.affiliate_link) || original.affiliate_link || `https://www.google.com/search?q=${encodeURIComponent('Buy ' + original.brand + ' ' + original.name + ' perfume ' + (region === 'UK' ? 'UK' : 'Ireland'))}`}
                       target="_blank"
@@ -457,7 +493,6 @@ function App() {
                     >
                       Buy Original <ExternalLink size={16} />
                     </a>
-                  )}
                 </div>
               </div>
 

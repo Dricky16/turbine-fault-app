@@ -1,75 +1,94 @@
+import axios from 'axios';
+import * as cheerio from 'cheerio';
+
 export default async function scrapeNotino(browser, product, supabase, tableName, region = 'IE') {
-  console.log(\`\\n🔍 Searching Notino (\${region}) for: \${product.brand} \${product.name}\`);
+  console.log(`\n🔍 Searching Notino (${region}) via DuckDuckGo for: ${product.brand} ${product.name}`);
+  const domain = region === 'UK' ? 'co.uk' : 'ie';
   
-  const page = await browser.newPage();
-  await page.setViewport({ width: 1280, height: 800 });
+  let decodedUrl = null;
+  const searchPage = await browser.newPage();
   
   try {
-    let cleanName = product.name;
-    if (cleanName.toLowerCase().startsWith(product.brand.toLowerCase())) {
-      cleanName = cleanName.substring(product.brand.length).trim();
-    }
-    const searchTerm = \`\${product.brand} \${cleanName}\`;
+    const query = `site:notino.${domain} "${product.brand} ${product.name}"`;
+    await searchPage.goto(`https://html.duckduckgo.com/html/?q=${encodeURIComponent(query)}`, { waitUntil: 'domcontentloaded', timeout: 15000 });
     
-    const domain = region === 'UK' ? 'co.uk' : 'ie';
-    const searchUrl = \`https://www.notino.\${domain}/search/?q=\${encodeURIComponent(searchTerm)}\`;
-    
-    await page.goto(searchUrl, { waitUntil: 'domcontentloaded', timeout: 15000 });
-    await new Promise(r => setTimeout(r, 2000));
-    
-    const result = await page.evaluate((brandName, region) => {
-      const links = Array.from(document.querySelectorAll('a'));
-      const currencySymbol = region === 'UK' ? '£' : '€';
-      
-      for (const link of links) {
-        const text = link.innerText || "";
-        if (text.toLowerCase().includes(brandName.toLowerCase()) && text.includes(currencySymbol)) {
-           const regex = region === 'UK' ? /£([\\d\\.]+)/ : /([\\d\\.]+)\\n*€/;
-           const priceMatch = text.match(regex);
-           
-           // Try to find image
-           let imgUrl = null;
-           const img = link.querySelector('img');
-           if (img) {
-             imgUrl = img.src;
-           }
-           
-           if (priceMatch) {
-             return {
-               url: link.href,
-               price: parseFloat(priceMatch[1]),
-               img: imgUrl
-             };
-           }
-        }
-      }
-      return null;
-    }, product.brand, region);
+    decodedUrl = await searchPage.evaluate(() => {
+       const links = Array.from(document.querySelectorAll('.result__url'));
+       for (const link of links) {
+          const url = link.getAttribute('href');
+          if (url && url.includes('uddg=') && url.includes('notino.')) {
+             const match = url.match(/uddg=([^&]+)/);
+             if (match) return decodeURIComponent(match[1]);
+          }
+       }
+       return null;
+    });
+  } catch(e) {
+    console.log(`❌ DDG search failed: ${e.message}`);
+  } finally {
+    await searchPage.close();
+  }
 
-    if (result && result.url) {
-      console.log(\`✅ Found! URL: \${result.url} | Price: \${region === 'UK' ? '£' : '€'}\${result.price}\`);
+  if (!decodedUrl) {
+    console.log(`❌ Could not find exact direct product link on DuckDuckGo.`);
+    return;
+  }
+  
+  console.log(`✅ DDG found direct link: ${decodedUrl}`);
+  console.log(`📸 Extracting Price and Image from Notino...`);
+
+  const page = await browser.newPage();
+  await page.setViewport({ width: 1280, height: 800 });
+
+  let updateData = {};
+  
+  try {
+    await page.goto(decodedUrl, { waitUntil: 'domcontentloaded', timeout: 15000 });
+    await new Promise(r => setTimeout(r, 4000));
+    
+    const details = await page.evaluate((region) => {
+      let priceText = null;
+      let imageUrl = null;
       
-      const updateData = {};
-      if (region === 'UK') {
-        updateData.uk_affiliate_link = result.url;
-        updateData.price_gbp = result.price;
-      } else {
-        updateData.affiliate_link = result.url;
-        updateData.price = result.price;
-      }
+      const priceEl = document.querySelector('[data-testid="price-component"]');
+      if (priceEl) priceText = priceEl.innerText;
       
-      // Update image if we found a high quality one
-      if (result.img && result.img.includes('notinoimg.com')) {
-        updateData.image_url = result.img;
-        console.log(\`   📸 Extracted Image: \${result.img.substring(0, 50)}...\`);
-      }
+      const imgEl = document.querySelector('img[src*="notinoimg.com"]');
+      if (imgEl) imageUrl = imgEl.src;
       
-      await supabase.from(tableName).update(updateData).eq('id', product.id);
-    } else {
-      console.log(\`❌ Could not find exact match.\`);
+      return { priceText, imageUrl };
+    }, region);
+
+    let numericPrice = null;
+    if (details.priceText) {
+      numericPrice = parseFloat(details.priceText.replace(/[^0-9.]/g, ''));
     }
-  } catch (err) {
-    console.error(\`Error on Notino page:\`, err.message);
+
+    if (region === 'UK') {
+      updateData.uk_affiliate_link = decodedUrl;
+      if (numericPrice) updateData.price_gbp = numericPrice;
+    } else {
+      updateData.affiliate_link = decodedUrl;
+      if (numericPrice) updateData.price = numericPrice;
+    }
+    
+    if (details.imageUrl) {
+      updateData.image_url = details.imageUrl;
+      console.log(`   📸 Extracted Image: ${details.imageUrl.substring(0, 50)}...`);
+    }
+    if (numericPrice) {
+      console.log(`   💰 Extracted Price: ${numericPrice}`);
+    }
+
+    if (Object.keys(updateData).length > 0) {
+      await supabase.from(tableName).update(updateData).eq('id', product.id);
+      console.log(`✅ Saved direct ${region} affiliate link to database.`);
+    } else {
+      console.log(`❌ Failed to extract price/image from the product page.`);
+    }
+
+  } catch (error) {
+    console.log(`❌ Failed to load Notino product page: ${error.message}`);
   } finally {
     await page.close();
   }

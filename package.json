@@ -20,6 +20,7 @@
     "cors": "^2.8.6",
     "dotenv": "^18.0.1",
     "express": "^5.2.1",
+    "images-scraper": "^7.0.0",
     "lucide-react": "^1.45.0",
     "postcss": "^8.5.28",
     "puppeteer": "^25.11.0",
