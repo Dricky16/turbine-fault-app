@@ -41,7 +41,7 @@ function App() {
       const uId = urlParams.get('userId');
       if (uId) {
         // Upgrade them via our backend shortcut
-        fetch('http://localhost:3001/api/upgrade-success', {
+        fetch('/api/upgrade-success', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ userId: uId })
@@ -217,7 +217,7 @@ function App() {
     
     try {
       // Send the image to our secure backend server
-      const res = await fetch('http://localhost:3001/api/analyze', {
+      const res = await fetch('/api/analyze', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

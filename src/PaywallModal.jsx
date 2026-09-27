@@ -9,7 +9,7 @@ export default function PaywallModal({ isOpen, onClose, userId }) {
   const handleUpgrade = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:3001/api/create-checkout-session', {
+      const response = await fetch('/api/create-checkout-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId })
