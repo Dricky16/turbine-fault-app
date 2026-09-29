@@ -11,6 +11,7 @@ function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [original, setOriginal] = useState(null);
   const [dupes, setDupes] = useState([]);
+  const [searchResultsList, setSearchResultsList] = useState([]);
   const [hasSearched, setHasSearched] = useState(false);
   const [loading, setLoading] = useState(false);
   const [region, setRegion] = useState('IE'); // 'IE' or 'UK'
@@ -463,7 +464,35 @@ function App() {
             </div>
           )}
 
-          {hasSearched && !loading && !error && !original && (
+          
+          {hasSearched && !loading && !error && searchResultsList.length > 0 && (
+            <div className="bg-white border border-luxury-200 rounded-3xl p-6 md:p-12 shadow-sm mb-12">
+              <h2 className="font-serif text-2xl text-luxury-900 mb-8 text-center">We found {searchResultsList.length} perfumes. Select one:</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                {searchResultsList.map(perfume => (
+                  <div 
+                    key={perfume.id} 
+                    onClick={() => selectPerfume(perfume)}
+                    className="group cursor-pointer border border-luxury-100 rounded-2xl p-6 flex flex-col items-center text-center hover:border-gold hover:shadow-md transition-all bg-luxury-50"
+                  >
+                    {perfume.image_url ? (
+                      <div className="h-32 w-24 mb-4 relative overflow-hidden">
+                        <img src={perfume.image_url} alt={perfume.name} className="object-contain w-full h-full mix-blend-multiply group-hover:scale-105 transition-transform" />
+                      </div>
+                    ) : (
+                      <div className="h-32 w-24 mb-4 flex items-center justify-center bg-white rounded-lg border border-luxury-100">
+                        <Sparkles className="text-gold w-8 h-8 opacity-50" />
+                      </div>
+                    )}
+                    <span className="text-luxury-500 text-xs tracking-widest uppercase mb-1">{perfume.brand}</span>
+                    <h3 className="font-serif text-lg text-luxury-900 leading-tight">{perfume.name}</h3>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {hasSearched && !loading && !error && !original && searchResultsList.length === 0 && (
             <div className="bg-white border border-luxury-200 rounded-3xl p-12 text-center shadow-sm">
               <h2 className="font-serif text-2xl text-luxury-900 mb-2">We couldn't find that perfume.</h2>
               <p className="text-luxury-600 mb-6">Our database is growing every day. Try searching for another popular fragrance.</p>
