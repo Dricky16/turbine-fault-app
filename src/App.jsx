@@ -590,16 +590,16 @@ function App() {
 
               {/* Dupes List */}
               <div className="flex items-center justify-between mb-6 px-2">
-                <h3 className="font-serif text-2xl font-semibold text-luxury-900">Closest Matches ({dupes.length})</h3>
+                <h3 className="font-serif text-2xl font-semibold text-luxury-900">Closest Matches ({filteredDupes.length})</h3>
               </div>
 
-              {dupes.length === 0 ? (
+              {filteredDupes.length === 0 ? (
                 <div className="text-center py-12 bg-white rounded-3xl border border-luxury-100">
                   <p className="text-luxury-500">We don't have any dupes recorded for this yet.</p>
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {dupes.map((dupe, index) => (
+                  {filteredDupes.map((dupe, index) => (
                     <div key={dupe.id} className="group bg-white hover:bg-luxury-50 border border-luxury-200 rounded-2xl p-6 transition-all duration-300 hover:shadow-md flex flex-col sm:flex-row gap-6 items-center sm:items-stretch relative overflow-hidden">
                       
                       {/* Top Match Badge */}
