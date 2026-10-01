@@ -6,6 +6,7 @@ import { supabase } from './supabaseClient';
 import CameraScanner from './CameraScanner';
 import RequestModal from './RequestModal';
 import { Filter } from 'lucide-react';
+import LegalModal from './LegalModal';
 
 function App() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -14,7 +15,8 @@ function App() {
   const [searchResultsList, setSearchResultsList] = useState([]);
   const [hasSearched, setHasSearched] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [region, setRegion] = useState('IE'); // 'IE' or 'UK'
+  const [region, setRegion] = useState('IE');
+  const [legalModalType, setLegalModalType] = useState(null); // 'IE' or 'UK'
 
   const getFallbackUrl = (brand, name, region) => {
     const query = encodeURIComponent(brand + ' ' + name);
