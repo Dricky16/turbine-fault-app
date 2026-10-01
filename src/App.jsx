@@ -12,6 +12,18 @@ function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [original, setOriginal] = useState(null);
   const [dupes, setDupes] = useState([]);
+  
+  const euOnlyBrands = ['lidl', 'aldi', 'jenny glow', 'milton lloyd', 'superdrug', 'la rive'];
+  const usOnlyBrands = ['dossier', 'alt fragrances', 'perry ellis'];
+  
+  const filteredDupes = dupes.filter(dupe => {
+    const brand = dupe.brand ? dupe.brand.toLowerCase() : '';
+    if (region === 'US') {
+      return !euOnlyBrands.some(eu => brand.includes(eu));
+    } else {
+      return !usOnlyBrands.some(us => brand.includes(us));
+    }
+  });
   const [searchResultsList, setSearchResultsList] = useState([]);
   const [hasSearched, setHasSearched] = useState(false);
   const [loading, setLoading] = useState(false);
