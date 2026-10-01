@@ -26,21 +26,30 @@ function App() {
     const b = brand.toLowerCase();
     
     if (b.includes('zara')) {
-      return `https://www.zara.com/${region === 'UK' ? 'uk/en' : 'ie/en'}/search.html?searchTerm=${query}`;
+      const zaraRegion = region === 'US' ? 'us/en' : (region === 'UK' ? 'uk/en' : 'ie/en');
+      return `https://www.zara.com/${zaraRegion}/search.html?searchTerm=${query}`;
     }
+    
     if (b.includes('ex nihilo') || b.includes('creed') || b.includes('tom ford') || b.includes('xerjoff')) {
+       if (region === 'US') return `https://www.saksfifthavenue.com/search?q=${query}`;
        return region === 'UK' 
         ? `https://www.selfridges.com/GB/en/cat/?freeText=${query}`
         : `https://www.brownthomas.com/search/?q=${query}`;
     }
+    
     if (b.includes('aldi') || b.includes('lidl') || b.includes('marks & spencer')) {
       return `https://www.google.com/search?q=${encodeURIComponent('Buy ' + searchQuery + ' perfume ' + region)}`;
     }
+    
     if (b.includes('perry ellis') || b.includes('dossier')) {
-      return `https://www.amazon.${region === 'UK' ? 'co.uk' : 'de'}/s?k=${query}`;
+      const amz = region === 'US' ? 'com' : (region === 'UK' ? 'co.uk' : 'de');
+      return `https://www.amazon.${amz}/s?k=${query}`;
     }
     
-    // Default to Notino for everything else (designers, Middle Eastern clones)
+    // Default fallback: Jomashop for US, Notino for EU
+    if (region === 'US') {
+      return `https://www.jomashop.com/search?q=${query}`;
+    }
     return `https://www.notino.${region === 'UK' ? 'co.uk' : 'ie'}/search/?q=${query}`;
   };
   const [error, setError] = useState(null);
