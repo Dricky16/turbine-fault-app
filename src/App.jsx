@@ -380,7 +380,6 @@ function App() {
             </button>
           </div>
         </form>
-        <p className="text-sm text-luxury-400 mb-16">Try searching: "Baccarat Rouge 540"</p>
 
         {/* Results Area */}
         <div className="w-full max-w-4xl">
