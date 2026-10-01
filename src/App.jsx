@@ -625,6 +625,37 @@ function App() {
           )}
         </div>
       </main>
+
+        {/* Legal & Compliance Footer */}
+        <footer className="w-full mt-24 py-12 border-t border-luxury-200">
+          <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="flex items-center gap-2">
+              <Sparkles className="text-gold" size={20} />
+              <span className="font-serif text-xl font-bold text-luxury-900 tracking-wider">
+                SCENTS<span className="text-luxury-500">FOR</span>CENTS
+              </span>
+            </div>
+            
+            <div className="flex flex-wrap justify-center gap-6 text-sm text-luxury-500 font-medium">
+              <button onClick={() => setLegalModalType('about')} className="hover:text-gold transition-colors">About Us</button>
+              <button onClick={() => setLegalModalType('disclosure')} className="hover:text-gold transition-colors">Affiliate Disclosure</button>
+              <button onClick={() => setLegalModalType('privacy')} className="hover:text-gold transition-colors">Privacy Policy</button>
+              <button onClick={() => setLegalModalType('terms')} className="hover:text-gold transition-colors">Terms of Service</button>
+            </div>
+            
+            <div className="text-xs text-luxury-400 text-center md:text-right">
+              &copy; {new Date().getFullYear()} Scents for Cents.<br/>All rights reserved.
+            </div>
+          </div>
+        </footer>
+
+        {/* Legal Modal */}
+        <LegalModal 
+          isOpen={legalModalType !== null} 
+          type={legalModalType} 
+          onClose={() => setLegalModalType(null)} 
+        />
+
     </div>
   );
 }
