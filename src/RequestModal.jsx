@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { X, Send } from 'lucide-react';
-import { supabase } from './supabaseClient';
 
 export default function RequestModal({ isOpen, onClose }) {
   const [scentName, setScentName] = useState('');
   const [brand, setBrand] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
 
   if (!isOpen) return null;
 
@@ -14,28 +14,40 @@ export default function RequestModal({ isOpen, onClose }) {
     e.preventDefault();
     if (!scentName.trim()) return;
     setSubmitting(true);
+    setError(null);
     
-    // Attempt to insert into a 'suggestions' table if it exists,
-    // otherwise fallback to 'dupes' table with a flag.
-    const { error } = await supabase.from('suggestions').insert([
-      { scent_name: scentName, brand: brand || 'Unknown' }
-    ]);
-    
-    if (error) {
-       // Fallback
-       await supabase.from('perfumes').insert([
-         { name: `SUGGESTION: ${scentName}`, brand: brand || 'Unknown' }
-       ]);
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        },
+        body: JSON.stringify({
+          access_key: 'WEB3FORMS_ACCESS_KEY_PLACEHOLDER',
+          subject: `New Scent Request: ${scentName}`,
+          message: `A user has requested a new scent to be added to the database!\n\nPerfume: ${scentName}\nBrand: ${brand || 'Not specified'}`
+        })
+      });
+      
+      const result = await response.json();
+      if (result.success) {
+        setSubmitted(true);
+        setTimeout(() => {
+          setSubmitted(false);
+          setScentName('');
+          setBrand('');
+          onClose();
+        }, 2500);
+      } else {
+        throw new Error('Failed to send request');
+      }
+    } catch (err) {
+      console.error('Error sending request:', err);
+      setError('Something went wrong. Please try again later.');
+    } finally {
+      setSubmitting(false);
     }
-
-    setSubmitting(false);
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      setScentName('');
-      setBrand('');
-      onClose();
-    }, 2500);
   };
 
   return (
@@ -61,6 +73,8 @@ export default function RequestModal({ isOpen, onClose }) {
             <h2 className="text-2xl font-serif font-bold text-luxury-900 mb-2">Request a Scent</h2>
             <p className="text-luxury-600 mb-6">Can't find your favorite perfume? Let us know and we'll track down the best dupes for it.</p>
             
+            {error && <p className="text-red-500 mb-4 text-sm font-medium text-center">{error}</p>}
+
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-semibold text-luxury-900 mb-1">Perfume Name *</label>
