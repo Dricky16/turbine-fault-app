@@ -36,6 +36,9 @@ function App() {
     if (b.includes('aldi') || b.includes('lidl') || b.includes('marks & spencer')) {
       return `https://www.google.com/search?q=${encodeURIComponent('Buy ' + searchQuery + ' perfume ' + region)}`;
     }
+    if (b.includes('perry ellis') || b.includes('dossier')) {
+      return `https://www.amazon.${region === 'UK' ? 'co.uk' : 'de'}/s?k=${query}`;
+    }
     
     // Default to Notino for everything else (designers, Middle Eastern clones)
     return `https://www.notino.${region === 'UK' ? 'co.uk' : 'ie'}/search/?q=${query}`;
