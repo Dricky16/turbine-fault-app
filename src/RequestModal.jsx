@@ -24,7 +24,7 @@ export default function RequestModal({ isOpen, onClose }) {
           Accept: 'application/json'
         },
         body: JSON.stringify({
-          access_key: 'WEB3FORMS_ACCESS_KEY_PLACEHOLDER',
+          access_key: 'afdabc4c-b1a1-4645-9435-fcf134ef26c5',
           subject: `New Scent Request: ${scentName}`,
           message: `A user has requested a new scent to be added to the database!\n\nPerfume: ${scentName}\nBrand: ${brand || 'Not specified'}`
         })
