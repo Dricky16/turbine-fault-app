@@ -20,21 +20,24 @@ function App() {
   const [deferredPrompt, setDeferredPrompt] = useState(null); // 'IE' or 'UK'
 
   const getFallbackUrl = (brand, name, region) => {
-    const query = encodeURIComponent(brand + ' ' + name);
+    // Avoid duplicating brand if it's already in the name
+    const searchQuery = name.toLowerCase().includes(brand.toLowerCase()) ? name : `${brand} ${name}`;
+    const query = encodeURIComponent(searchQuery);
     const b = brand.toLowerCase();
     
     if (b.includes('zara')) {
       return `https://www.zara.com/${region === 'UK' ? 'uk/en' : 'ie/en'}/search.html?searchTerm=${query}`;
     }
-    if (b.includes('ex nihilo') || b.includes('creed') || b.includes('tom ford')) {
+    if (b.includes('ex nihilo') || b.includes('creed') || b.includes('tom ford') || b.includes('xerjoff')) {
        return region === 'UK' 
         ? `https://www.selfridges.com/GB/en/cat/?freeText=${query}`
         : `https://www.brownthomas.com/search/?q=${query}`;
     }
     if (b.includes('aldi') || b.includes('lidl') || b.includes('marks & spencer')) {
-      return `https://www.google.com/search?q=${encodeURIComponent('Buy ' + brand + ' ' + name + ' perfume ' + region)}`;
+      return `https://www.google.com/search?q=${encodeURIComponent('Buy ' + searchQuery + ' perfume ' + region)}`;
     }
     
+    // Default to Notino for everything else (designers, Middle Eastern clones)
     return `https://www.notino.${region === 'UK' ? 'co.uk' : 'ie'}/search/?q=${query}`;
   };
   const [error, setError] = useState(null);
