@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Sparkles, ExternalLink, Camera, ArrowRight, ShieldCheck, Percent, Tag, User } from 'lucide-react';
+import { Search, Sparkles, ExternalLink, Camera, ArrowRight, ShieldCheck, Percent, Tag, User, BellRing } from 'lucide-react';
 import AuthModal from './AuthModal';
 import PaywallModal from './PaywallModal';
 import { supabase } from './supabaseClient';
 import CameraScanner from './CameraScanner';
 import RequestModal from './RequestModal';
+import PriceAlertModal from './PriceAlertModal';
 import { Filter } from 'lucide-react';
 import LegalModal from './LegalModal';
 
@@ -30,6 +31,9 @@ function App() {
   const [region, setRegion] = useState('IE');
   const [legalModalType, setLegalModalType] = useState(null);
   const [deferredPrompt, setDeferredPrompt] = useState(null); // 'IE' or 'UK'
+  const [isPriceAlertOpen, setIsPriceAlertOpen] = useState(false);
+  const [priceAlertPerfume, setPriceAlertPerfume] = useState(null);
+
 
   const getFallbackUrl = (brand, name, region) => {
     // Avoid duplicating brand if it's already in the name
@@ -593,10 +597,19 @@ function App() {
                       href={(region === 'UK' ? original.uk_affiliate_link : original.affiliate_link) || original.affiliate_link || getFallbackUrl(original.brand, original.name, region)}
                       target="_blank"
                       rel="noreferrer"
-                      className="w-full flex items-center justify-center gap-2 bg-white border-2 border-luxury-900 text-luxury-900 hover:bg-luxury-50 px-6 py-3 rounded-xl font-medium transition-colors whitespace-nowrap"
+                      className="w-full flex items-center justify-center gap-2 bg-white border-2 border-luxury-900 text-luxury-900 hover:bg-luxury-50 px-6 py-3 rounded-xl font-medium transition-colors whitespace-nowrap mb-3"
                     >
                       Buy Original <ExternalLink size={16} />
                     </a>
+                    <button 
+                      onClick={() => {
+                        setPriceAlertPerfume(original);
+                        setIsPriceAlertOpen(true);
+                      }}
+                      className="w-full flex items-center justify-center gap-2 bg-luxury-50 text-luxury-700 hover:bg-luxury-100 px-6 py-3 rounded-xl font-medium transition-colors whitespace-nowrap border border-luxury-200"
+                    >
+                      <BellRing size={16} /> Price Alert
+                    </button>
                 </div>
               </div>
 
@@ -704,6 +717,11 @@ function App() {
           </div>
         </footer>
 
+        <PriceAlertModal
+          isOpen={isPriceAlertOpen}
+          onClose={() => setIsPriceAlertOpen(false)}
+          perfume={priceAlertPerfume}
+        />
         {/* Legal Modal */}
         <LegalModal 
           isOpen={legalModalType !== null} 
