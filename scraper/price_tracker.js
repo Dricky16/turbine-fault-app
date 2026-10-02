@@ -8,56 +8,53 @@ const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.resolve(__dirname, '../.env.local') });
 
 const supabaseUrl = process.env.VITE_SUPABASE_URL;
-// MUST use Service Role Key for background cron jobs to bypass RLS and read emails
+// MUST use Service Role Key to bypass RLS and access user emails
 const supabaseKey = process.env.VITE_SUPABASE_SERVICE_ROLE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function run() {
-  console.log("Starting nightly price tracker...");
+  console.log("Starting nightly price tracker for User Favorites...");
   
-  // 1. Fetch all active alerts
-  const { data: alerts, error } = await supabase
-    .from('price_alerts')
+  // 1. Fetch all favorites
+  const { data: favorites, error } = await supabase
+    .from('favorites')
     .select(`
       id, 
-      user_email, 
-      target_price,
+      user_id,
       perfume_id,
-      perfumes (name, brand, affiliate_link)
-    `)
-    .eq('is_active', true);
+      perfumes (name, brand, price, affiliate_link)
+    `);
     
   if (error) {
-    console.error("Failed to fetch alerts:", error);
+    console.error("Failed to fetch favorites:", error);
     return;
   }
   
-  console.log(`Found ${alerts.length} active price alerts.`);
+  console.log(`Found ${favorites.length} saved favorites.`);
   
-  // 2. Loop through alerts (in reality, we would group by perfume_id to save requests)
-  for (const alert of alerts) {
-    const perfume = alert.perfumes;
+  for (const fav of favorites) {
+    const perfume = fav.perfumes;
     console.log(`Checking price for ${perfume.brand} ${perfume.name}...`);
     
     // --> ATTACH SCRAPER LOGIC HERE <--
     // Scrape Brown Thomas or Notino to get current live price
     const livePrice = 250; // Mock current price
     
-    if (livePrice <= alert.target_price) {
-      console.log(`PRICE DROP DETECTED! ${livePrice} is <= ${alert.target_price}`);
+    // If live price is at least 15% cheaper than the retail price in our DB
+    const discountThreshold = perfume.price * 0.85; 
+    
+    if (livePrice <= discountThreshold) {
+      console.log(`SALE DETECTED! ${perfume.name} dropped to ${livePrice}`);
       
-      // --> TRIGGER EMAIL HERE <--
-      // Use Resend, SendGrid, or Web3Forms API to email alert.user_email
+      // Fetch user's email using Admin API
+      const { data: userData } = await supabase.auth.admin.getUserById(fav.user_id);
+      const userEmail = userData?.user?.email;
       
-      // 3. Deactivate the alert so we don't spam them every night
-      await supabase
-        .from('price_alerts')
-        .update({ is_active: false })
-        .eq('id', alert.id);
-        
-      console.log(`Emailed ${alert.user_email} and deactivated alert.`);
-    } else {
-      console.log(`No drop. Target: ${alert.target_price}. Live: ${livePrice}`);
+      if (userEmail) {
+        // --> TRIGGER EMAIL HERE <--
+        // Send email telling them a perfume on their Favorites list is on sale!
+        console.log(`Emailed ${userEmail} about the sale.`);
+      }
     }
   }
   

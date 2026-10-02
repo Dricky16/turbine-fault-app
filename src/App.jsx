@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Sparkles, ExternalLink, Camera, ArrowRight, ShieldCheck, Percent, Tag, User, BellRing } from 'lucide-react';
+import { Search, Sparkles, ExternalLink, Camera, ArrowRight, ShieldCheck, Percent, Tag, User, Heart } from 'lucide-react';
 import AuthModal from './AuthModal';
 import PaywallModal from './PaywallModal';
 import { supabase } from './supabaseClient';
 import CameraScanner from './CameraScanner';
 import RequestModal from './RequestModal';
-import PriceAlertModal from './PriceAlertModal';
 import { Filter } from 'lucide-react';
 import LegalModal from './LegalModal';
 
@@ -33,8 +32,7 @@ function App() {
   });
   const [legalModalType, setLegalModalType] = useState(null);
   const [deferredPrompt, setDeferredPrompt] = useState(null); // 'IE' or 'UK'
-  const [isPriceAlertOpen, setIsPriceAlertOpen] = useState(false);
-  const [priceAlertPerfume, setPriceAlertPerfume] = useState(null);
+  const [favorites, setFavorites] = useState([]);
 
 
   const getFallbackUrl = (brand, name, region) => {
@@ -150,17 +148,27 @@ function App() {
       if (data) setProfile(data);
     };
 
+    const fetchFavorites = async (userId) => {
+      const { data } = await supabase.from('favorites').select('perfume_id').eq('user_id', userId);
+      if (data) setFavorites(data.map(f => f.perfume_id));
+    };
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
-      if (session?.user) fetchProfile(session.user.id);
+      if (session?.user) {
+        fetchProfile(session.user.id);
+        fetchFavorites(session.user.id);
+      }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       if (session?.user) {
         fetchProfile(session.user.id);
+        fetchFavorites(session.user.id);
       } else {
         setProfile(null);
+        setFavorites([]);
       }
     });
 
@@ -263,6 +271,21 @@ function App() {
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const toggleFavorite = async (perfumeId) => {
+    if (!session) {
+      setShowAuthModal(true);
+      return;
+    }
+    
+    if (favorites.includes(perfumeId)) {
+      setFavorites(prev => prev.filter(id => id !== perfumeId));
+      await supabase.from('favorites').delete().eq('user_id', session.user.id).eq('perfume_id', perfumeId);
+    } else {
+      setFavorites(prev => [...prev, perfumeId]);
+      await supabase.from('favorites').insert([{ user_id: session.user.id, perfume_id: perfumeId }]);
     }
   };
 
@@ -604,13 +627,15 @@ function App() {
                       Buy Original <ExternalLink size={16} />
                     </a>
                     <button 
-                      onClick={() => {
-                        setPriceAlertPerfume(original);
-                        setIsPriceAlertOpen(true);
-                      }}
-                      className="w-full flex items-center justify-center gap-2 bg-luxury-50 text-luxury-700 hover:bg-luxury-100 px-6 py-3 rounded-xl font-medium transition-colors whitespace-nowrap border border-luxury-200"
+                      onClick={() => toggleFavorite(original.id)}
+                      className={`w-full flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-medium transition-colors whitespace-nowrap border ${
+                        favorites.includes(original.id)
+                          ? 'bg-rose-50 text-rose-600 border-rose-200 hover:bg-rose-100'
+                          : 'bg-luxury-50 text-luxury-700 border-luxury-200 hover:bg-luxury-100'
+                      }`}
                     >
-                      <BellRing size={16} /> Price Alert
+                      <Heart size={16} className={favorites.includes(original.id) ? 'fill-rose-500 text-rose-500' : ''} /> 
+                      {favorites.includes(original.id) ? 'Saved' : 'Save to Favorites'}
                     </button>
                 </div>
               </div>
@@ -719,11 +744,6 @@ function App() {
           </div>
         </footer>
 
-        <PriceAlertModal
-          isOpen={isPriceAlertOpen}
-          onClose={() => setIsPriceAlertOpen(false)}
-          perfume={priceAlertPerfume}
-        />
         {/* Legal Modal */}
         <LegalModal 
           isOpen={legalModalType !== null} 
