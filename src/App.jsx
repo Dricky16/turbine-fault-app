@@ -14,6 +14,12 @@ function App() {
   const [original, setOriginal] = useState(null);
   const [dupes, setDupes] = useState([]);
   
+
+  const [searchResultsList, setSearchResultsList] = useState([]);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [region, setRegion] = useState('IE');
+  
   const euOnlyBrands = ['lidl', 'aldi', 'jenny glow', 'milton lloyd', 'superdrug', 'la rive'];
   const usOnlyBrands = ['dossier', 'alt fragrances', 'perry ellis'];
   
@@ -25,10 +31,6 @@ function App() {
       return !usOnlyBrands.some(us => brand.includes(us));
     }
   });
-  const [searchResultsList, setSearchResultsList] = useState([]);
-  const [hasSearched, setHasSearched] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [region, setRegion] = useState('IE');
   const [legalModalType, setLegalModalType] = useState(null);
   const [deferredPrompt, setDeferredPrompt] = useState(null); // 'IE' or 'UK'
   const [isPriceAlertOpen, setIsPriceAlertOpen] = useState(false);
