@@ -10,12 +10,14 @@ export default async function handler(req, res) {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [{ price: process.env.VITE_STRIPE_PRICE_ID, quantity: 1 }],
-      mode: 'payment',
+      mode: 'subscription', // Changed from payment to subscription
       success_url: `${origin}/?success=true&userId=${userId}`,
       cancel_url: `${origin}/`,
       metadata: { userId },
     });
-    res.json({ id: session.id });
+    
+    // Return the URL for the frontend to redirect
+    res.json({ url: session.url });
   } catch (error) {
     console.error('Stripe error:', error);
     res.status(500).json({ error: error.message });
