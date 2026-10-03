@@ -208,6 +208,27 @@ function App() {
     return currency.symbol + (parseFloat(price) * currency.rate).toFixed(2);
   };
 
+  const selectPerfume = async (selectedOriginal) => {
+    setSearchResultsList([]);
+    setLoading(true);
+    try {
+      setOriginal(selectedOriginal);
+      
+      const { data: finalDupes } = await supabase
+        .from('dupes')
+        .select('*')
+        .eq('original_id', selectedOriginal.id)
+        .order('similarity_match', { ascending: false });
+        
+      setDupes(finalDupes || []);
+    } catch (err) {
+      console.error(err);
+      setError("An error occurred while loading this perfume.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const executeSearch = async (term) => {
     if (!term.trim()) return;
     
@@ -217,54 +238,46 @@ function App() {
     setError(null);
     setOriginal(null);
     setDupes([]);
+    setSearchResultsList([]);
 
     try {
-      let targetOriginalId = null;
-
-      // 1. First, try searching the 'perfumes' table (Originals) by name OR brand
-      const { data: perfumeData, error: perfumeError } = await supabase
+      // 1. Try searching the 'perfumes' table (Originals) by name OR brand
+      const { data: perfumesData, error: perfumeError } = await supabase
         .from('perfumes')
-        .select('id')
-        .or(`name.ilike.%${term.trim()}%,brand.ilike.%${term.trim()}%`)
-        .limit(1)
-        .maybeSingle();
+        .select('*')
+        .or(`name.ilike.%${term.trim()}%,brand.ilike.%${term.trim()}%`);
 
-      if (perfumeData) {
-        targetOriginalId = perfumeData.id;
+      if (perfumesData && perfumesData.length > 0) {
+        if (perfumesData.length === 1) {
+          await selectPerfume(perfumesData[0]);
+        } else {
+          setSearchResultsList(perfumesData);
+        }
       } else {
         // 2. If not found in originals, search the 'dupes' table by name OR brand
-        const { data: dupeData, error: dupeError } = await supabase
+        const { data: dupesData, error: dupeError } = await supabase
           .from('dupes')
           .select('original_id')
-          .or(`name.ilike.%${term.trim()}%,brand.ilike.%${term.trim()}%`)
-          .limit(1)
-          .maybeSingle();
+          .or(`name.ilike.%${term.trim()}%,brand.ilike.%${term.trim()}%`);
           
-        if (dupeData) {
-          targetOriginalId = dupeData.original_id;
+        if (dupesData && dupesData.length > 0) {
+          const uniqueOriginalIds = [...new Set(dupesData.map(d => d.original_id))];
+          
+          const { data: mappedOriginals } = await supabase
+            .from('perfumes')
+            .select('*')
+            .in('id', uniqueOriginalIds);
+            
+          if (mappedOriginals && mappedOriginals.length === 1) {
+            await selectPerfume(mappedOriginals[0]);
+          } else if (mappedOriginals && mappedOriginals.length > 1) {
+            setSearchResultsList(mappedOriginals);
+          } else {
+            setOriginal(null);
+          }
+        } else {
+          setOriginal(null);
         }
-      }
-
-      // 3. If we found a matching ID, fetch the full data
-      if (targetOriginalId) {
-        const { data: finalOriginal } = await supabase
-          .from('perfumes')
-          .select('*')
-          .eq('id', targetOriginalId)
-          .single();
-          
-        setOriginal(finalOriginal);
-        
-        const { data: finalDupes } = await supabase
-          .from('dupes')
-          .select('*')
-          .eq('original_id', targetOriginalId)
-          .order('similarity_match', { ascending: false });
-          
-        setDupes(finalDupes || []);
-      } else {
-        // Nothing found at all
-        setOriginal(null);
       }
     } catch (err) {
       setError("An error occurred while searching. Please try again.");
