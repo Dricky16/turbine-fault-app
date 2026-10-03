@@ -721,7 +721,7 @@ function App() {
                             Available In-Store Only
                           </div>
                         ) : (
-                          {((region === 'UK' ? dupe.uk_affiliate_link : dupe.affiliate_link) || dupe.affiliate_link || getFallbackUrl(dupe.brand, dupe.name, region)) ? (
+                          ((region === 'UK' ? dupe.uk_affiliate_link : dupe.affiliate_link) || dupe.affiliate_link || getFallbackUrl(dupe.brand, dupe.name, region)) ? (
                           <a 
                             href={(region === 'UK' ? dupe.uk_affiliate_link : dupe.affiliate_link) || dupe.affiliate_link || getFallbackUrl(dupe.brand, dupe.name, region)}
                             target="_blank"
@@ -734,7 +734,7 @@ function App() {
                           <button disabled className="w-full flex items-center justify-center gap-2 bg-gray-100 text-gray-400 px-6 py-3 rounded-xl font-medium cursor-not-allowed whitespace-nowrap">
                             Out of Stock Online
                           </button>
-                        )}
+                        )
                         )}
                       </div>
                     </div>
