@@ -79,16 +79,18 @@ export default function PaywallModal({ isOpen, onClose, userId }) {
           </ul>
 
           <div className="space-y-3">
-            <button
-              onClick={() => handleUpgrade('yearly')}
-              disabled={loadingType !== null}
-              className="w-full relative bg-gold-500 text-luxury-950 py-4 px-4 rounded-xl font-bold text-lg hover:bg-gold-400 focus:ring-4 focus:ring-gold-200 transition-all shadow-md border-2 border-gold-600 flex flex-col items-center justify-center mt-6"
-            >
-              <div className="absolute -top-3 bg-rose-500 text-white text-[11px] uppercase tracking-wider font-bold px-4 py-1 rounded-full shadow-sm border border-rose-600">
+            <div className="relative mt-6">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-rose-500 text-white text-[11px] uppercase tracking-wider font-bold px-4 py-1 rounded-full shadow-sm border border-rose-600 z-10 pointer-events-none whitespace-nowrap">
                 Best Value (Save 15%)
               </div>
-              <span>{loadingType === 'yearly' ? 'Redirecting...' : 'Yearly — €40.00 / year'}</span>
-            </button>
+              <button
+                onClick={() => handleUpgrade('yearly')}
+                disabled={loadingType !== null}
+                className="w-full bg-gold-500 text-luxury-950 pt-6 pb-4 px-4 rounded-xl font-bold text-lg hover:bg-gold-400 focus:ring-4 focus:ring-gold-200 transition-all shadow-md border-2 border-gold-600 flex items-center justify-center relative"
+              >
+                <span>{loadingType === 'yearly' ? 'Redirecting...' : 'Yearly — €40.00 / year'}</span>
+              </button>
+            </div>
             
             <button
               onClick={() => handleUpgrade('monthly')}
