@@ -3,7 +3,7 @@ import Stripe from 'stripe';
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).send('Method Not Allowed');
   try {
-    const stripe = new Stripe(process.env.VITE_STRIPE_SECRET_KEY);
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
     const { userId } = req.body;
     const origin = req.headers.origin || 'http://localhost:5173';
     
