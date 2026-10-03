@@ -46,7 +46,7 @@ function App() {
       return `https://www.zara.com/${zaraRegion}/search.html?searchTerm=${query}`;
     }
     
-    if (b.includes('ex nihilo') || b.includes('creed') || b.includes('tom ford') || b.includes('xerjoff')) {
+    if (b.includes('ex nihilo') || b.includes('creed') || b.includes('tom ford') || b.includes('xerjoff') || b.includes('maison margiela') || b.includes('byredo') || b.includes('le labo') || b.includes('dior') || b.includes('chanel') || b.includes('ysl') || b.includes('giorgio armani') || b.includes('paco rabanne') || b.includes('mugler') || b.includes('carolina herrera') || b.includes('marc jacobs') || b.includes('jo malone') || b.includes('roja') || b.includes('parfums de marly')) {
        if (region === 'US') return `https://www.saksfifthavenue.com/search?q=${query}`;
        return region === 'UK' 
         ? `https://www.selfridges.com/GB/en/cat/?freeText=${query}`
@@ -66,7 +66,7 @@ function App() {
     if (region === 'US') {
       return `https://www.jomashop.com/search?q=${query}`;
     }
-    return `https://www.notino.${region === 'UK' ? 'co.uk' : 'ie'}/search/?q=${query}`;
+    return null;
   };
   const [error, setError] = useState(null);
   const [allPerfumes, setAllPerfumes] = useState([]);
@@ -631,14 +631,20 @@ function App() {
                 {/* Original Buy Button */}
                 <div className="flex flex-col items-center justify-center border-t sm:border-t-0 sm:border-l border-luxury-100 w-full sm:w-auto pt-6 sm:pt-0 sm:pl-8">
                   
-                    <a 
-                      href={(region === 'UK' ? original.uk_affiliate_link : original.affiliate_link) || original.affiliate_link || getFallbackUrl(original.brand, original.name, region)}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="w-full flex items-center justify-center gap-2 bg-white border-2 border-luxury-900 text-luxury-900 hover:bg-luxury-50 px-6 py-3 rounded-xl font-medium transition-colors whitespace-nowrap mb-3"
-                    >
-                      Buy Original <ExternalLink size={16} />
-                    </a>
+                    {((region === 'UK' ? original.uk_affiliate_link : original.affiliate_link) || original.affiliate_link || getFallbackUrl(original.brand, original.name, region)) ? (
+                      <a 
+                        href={(region === 'UK' ? original.uk_affiliate_link : original.affiliate_link) || original.affiliate_link || getFallbackUrl(original.brand, original.name, region)}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="w-full flex items-center justify-center gap-2 bg-white border-2 border-luxury-900 text-luxury-900 hover:bg-luxury-50 px-6 py-3 rounded-xl font-medium transition-colors whitespace-nowrap mb-3"
+                      >
+                        Buy Original <ExternalLink size={16} />
+                      </a>
+                    ) : (
+                      <button disabled className="w-full flex items-center justify-center gap-2 bg-gray-50 text-gray-400 border-2 border-gray-200 px-6 py-3 rounded-xl font-medium cursor-not-allowed mb-3">
+                        Out of Stock Online
+                      </button>
+                    )}
                     <button 
                       onClick={() => toggleFavorite(original.id)}
                       className={`w-full flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-medium transition-colors whitespace-nowrap border ${
@@ -715,6 +721,7 @@ function App() {
                             Available In-Store Only
                           </div>
                         ) : (
+                          {((region === 'UK' ? dupe.uk_affiliate_link : dupe.affiliate_link) || dupe.affiliate_link || getFallbackUrl(dupe.brand, dupe.name, region)) ? (
                           <a 
                             href={(region === 'UK' ? dupe.uk_affiliate_link : dupe.affiliate_link) || dupe.affiliate_link || getFallbackUrl(dupe.brand, dupe.name, region)}
                             target="_blank"
@@ -723,6 +730,11 @@ function App() {
                           >
                             Buy Dupe <ExternalLink size={16} />
                           </a>
+                        ) : (
+                          <button disabled className="w-full flex items-center justify-center gap-2 bg-gray-100 text-gray-400 px-6 py-3 rounded-xl font-medium cursor-not-allowed whitespace-nowrap">
+                            Out of Stock Online
+                          </button>
+                        )}
                         )}
                       </div>
                     </div>
