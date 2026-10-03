@@ -12,23 +12,17 @@ const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function run() {
-  const { data: perfumes } = await supabase.from('perfumes').select('brand, name, affiliate_link');
-  const { data: dupes } = await supabase.from('dupes').select('brand, name, affiliate_link');
+  const { data: perfumes } = await supabase.from('perfumes').select('id, name, brand, affiliate_link');
+  const { data: dupes, error } = await supabase.from('dupes').select('id, name, brand, affiliate_link');
+  if (error) console.error("Dupes error:", error);
   
-  const missingPerfumes = perfumes.filter(p => !p.affiliate_link);
-  const missingDupes = dupes.filter(d => !d.affiliate_link);
+  let p_with_link = 0;
+  let d_with_link = 0;
   
-  console.log(`Perfumes: ${perfumes.length - missingPerfumes.length} / ${perfumes.length} have links`);
-  console.log(`Dupes: ${dupes.length - missingDupes.length} / ${dupes.length} have links`);
-  console.log('Total Missing:', missingPerfumes.length + missingDupes.length);
+  perfumes.forEach(p => { if (p.affiliate_link) p_with_link++; });
+  if (dupes) dupes.forEach(d => { if (d.affiliate_link) d_with_link++; });
   
-  if (missingPerfumes.length > 0) {
-     console.log('\nMissing Perfume Links:');
-     missingPerfumes.slice(0, 10).forEach(p => console.log(`- ${p.brand} ${p.name}`));
-  }
-  if (missingDupes.length > 0) {
-     console.log('\nMissing Dupe Links:');
-     missingDupes.slice(0, 10).forEach(d => console.log(`- ${d.brand} ${d.name}`));
-  }
+  console.log(`Originals: ${perfumes.length} total, ${p_with_link} have explicit links`);
+  console.log(`Dupes: ${dupes ? dupes.length : 0} total, ${d_with_link} have explicit links`);
 }
 run();
