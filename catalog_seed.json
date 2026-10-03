@@ -1,0 +1,893 @@
+[
+  {
+    "original": {
+      "name": "Baccarat Rouge 540",
+      "brand": "Maison Francis Kurkdjian",
+      "price": 250,
+      "notes": "Saffron, Jasmine | Amberwood, Ambergris | Fir Resin, Cedar",
+      "image_url": "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80"
+    },
+    "dupes": [
+      {
+        "brand": "Armaf",
+        "name": "Club de Nuit Untold",
+        "price": 58,
+        "similarity_match": 95,
+        "notes": "Inspired by Baccarat Rouge 540",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Zara",
+        "name": "Red Temptation",
+        "price": 22.95,
+        "similarity_match": 88,
+        "notes": "Inspired by Baccarat Rouge 540",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Ariana Grande",
+        "name": "Cloud",
+        "price": 35,
+        "similarity_match": 85,
+        "notes": "Inspired by Baccarat Rouge 540",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Lattafa",
+        "name": "Ana Abiyedh Rouge",
+        "price": 20,
+        "similarity_match": 92,
+        "notes": "Inspired by Baccarat Rouge 540",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Maison Alhambra",
+        "name": "Baroque Rouge 540",
+        "price": 25,
+        "similarity_match": 90,
+        "notes": "Inspired by Baccarat Rouge 540",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      }
+    ]
+  },
+  {
+    "original": {
+      "name": "Aventus",
+      "brand": "Creel",
+      "price": 295,
+      "notes": "Pineapple, Bergamot, Black Currant | Birch, Patchouli, Moroccan Jasmine | Musk, Oak moss, Ambergris",
+      "image_url": "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80"
+    },
+    "dupes": [
+      {
+        "brand": "Armaf",
+        "name": "Club de Nuit Intense Man",
+        "price": 35,
+        "similarity_match": 95,
+        "notes": "Inspired by Aventus",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Zara",
+        "name": "Vibrant Leather",
+        "price": 22.95,
+        "similarity_match": 85,
+        "notes": "Inspired by Aventus",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Lattafa",
+        "name": "Qaed Al Fursan",
+        "price": 20,
+        "similarity_match": 88,
+        "notes": "Inspired by Aventus",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Afnan",
+        "name": "Supremacy Silver",
+        "price": 45,
+        "similarity_match": 92,
+        "notes": "Inspired by Aventus",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Montblanc",
+        "name": "Explorer",
+        "price": 40,
+        "similarity_match": 89,
+        "notes": "Inspired by Aventus",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      }
+    ]
+  },
+  {
+    "original": {
+      "name": "Delina",
+      "brand": "Parfums de Marly",
+      "price": 245,
+      "notes": "Litchi, Rhubarb, Bergamot | Turkish Rose, Peony, Musk | Cashmeran, Cedar, Incense",
+      "image_url": "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80"
+    },
+    "dupes": [
+      {
+        "brand": "Zara",
+        "name": "Fashionably London",
+        "price": 22.95,
+        "similarity_match": 85,
+        "notes": "Inspired by Delina",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Armaf",
+        "name": "Club de Nuit Imperiale",
+        "price": 45,
+        "similarity_match": 92,
+        "notes": "Inspired by Delina",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Maison Alhambra",
+        "name": "Delilah",
+        "price": 25,
+        "similarity_match": 90,
+        "notes": "Inspired by Delina",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Afnan",
+        "name": "Souvenir Floral Bouquet",
+        "price": 35,
+        "similarity_match": 88,
+        "notes": "Inspired by Delina",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      }
+    ]
+  },
+  {
+    "original": {
+      "name": "Angels Share",
+      "brand": "Kilian",
+      "price": 210,
+      "notes": "Cognac | Cinnamon, Tonka Bean, Oak | Praline, Vanilla, Sandalwood",
+      "image_url": "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80"
+    },
+    "dupes": [
+      {
+        "brand": "Lattafa",
+        "name": "Khamrah",
+        "price": 35,
+        "similarity_match": 90,
+        "notes": "Inspired by Angels Share",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Maison Alhambra",
+        "name": "Kismet Angel",
+        "price": 25,
+        "similarity_match": 95,
+        "notes": "Inspired by Angels Share",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Zara",
+        "name": "Sand Desert at Sunset",
+        "price": 22.95,
+        "similarity_match": 85,
+        "notes": "Inspired by Angels Share",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Fragrance World",
+        "name": "Cocktail Intense",
+        "price": 20,
+        "similarity_match": 92,
+        "notes": "Inspired by Angels Share",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      }
+    ]
+  },
+  {
+    "original": {
+      "name": "Tobacco Vanille",
+      "brand": "Tom Ford",
+      "price": 240,
+      "notes": "Tobacco Leaf, Spicy Notes | Vanilla, Cacao, Tonka Bean | Dried Fruits, Woody Notes",
+      "image_url": "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80"
+    },
+    "dupes": [
+      {
+        "brand": "Maison Alhambra",
+        "name": "Tobacco Touch",
+        "price": 25,
+        "similarity_match": 93,
+        "notes": "Inspired by Tobacco Vanille",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Zara",
+        "name": "Warm Black",
+        "price": 15.95,
+        "similarity_match": 80,
+        "notes": "Inspired by Tobacco Vanille",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Al Haramain",
+        "name": "Amber Oud Tobacco Edition",
+        "price": 60,
+        "similarity_match": 95,
+        "notes": "Inspired by Tobacco Vanille",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Fragrance World",
+        "name": "Vanilla So Sweet",
+        "price": 20,
+        "similarity_match": 88,
+        "notes": "Inspired by Tobacco Vanille",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      }
+    ]
+  },
+  {
+    "original": {
+      "name": "Oud Wood",
+      "brand": "Tom Ford",
+      "price": 240,
+      "notes": "Rosewood, Cardamom, Chinese Pepper | Oud, Sandalwood, Vetiver | Tonka Bean, Vanilla, Amber",
+      "image_url": "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80"
+    },
+    "dupes": [
+      {
+        "brand": "Maison Alhambra",
+        "name": "Woody Oud",
+        "price": 25,
+        "similarity_match": 92,
+        "notes": "Inspired by Oud Wood",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Zara",
+        "name": "Ebony Wood",
+        "price": 22.95,
+        "similarity_match": 82,
+        "notes": "Inspired by Oud Wood",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Versace",
+        "name": "Oud Noir",
+        "price": 80,
+        "similarity_match": 85,
+        "notes": "Inspired by Oud Wood",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      }
+    ]
+  },
+  {
+    "original": {
+      "name": "Lost Cherry",
+      "brand": "Tom Ford",
+      "price": 260,
+      "notes": "Sour Cherry, Bitter Almond | Plum, Turkish Rose, Jasmine | Tonka Bean, Vanilla, Peru Balsam",
+      "image_url": "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80"
+    },
+    "dupes": [
+      {
+        "brand": "Maison Alhambra",
+        "name": "Lovely Cherie",
+        "price": 25,
+        "similarity_match": 90,
+        "notes": "Inspired by Lost Cherry",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Zara",
+        "name": "Cherry Smoothie",
+        "price": 22.95,
+        "similarity_match": 85,
+        "notes": "Inspired by Lost Cherry",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Fragrance World",
+        "name": "Lush Cherry",
+        "price": 22,
+        "similarity_match": 88,
+        "notes": "Inspired by Lost Cherry",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      }
+    ]
+  },
+  {
+    "original": {
+      "name": "Black Opium",
+      "brand": "Yves Saint Laurent",
+      "price": 110,
+      "notes": "Pear, Pink Pepper, Orange Blossom | Coffee, Jasmine, Bitter Almond | Vanilla, Patchouli, Cashmere Wood",
+      "image_url": "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80"
+    },
+    "dupes": [
+      {
+        "brand": "Zara",
+        "name": "Gardenia",
+        "price": 15.95,
+        "similarity_match": 90,
+        "notes": "Inspired by Black Opium",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Superdrug",
+        "name": "Layering Lab Midnight",
+        "price": 10,
+        "similarity_match": 85,
+        "notes": "Inspired by Black Opium",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Maison Alhambra",
+        "name": "Opera Noir",
+        "price": 20,
+        "similarity_match": 92,
+        "notes": "Inspired by Black Opium",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      }
+    ]
+  },
+  {
+    "original": {
+      "name": "Libre",
+      "brand": "Yves Saint Laurent",
+      "price": 110,
+      "notes": "Lavender, Mandarin Orange, Black Currant | Lavender, Orange Blossom, Jasmine | Madagascar Vanilla, Musk, Cedar",
+      "image_url": "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80"
+    },
+    "dupes": [
+      {
+        "brand": "Zara",
+        "name": "Golden Decade",
+        "price": 22.95,
+        "similarity_match": 95,
+        "notes": "Inspired by Libre",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Maison Alhambra",
+        "name": "Leon",
+        "price": 20,
+        "similarity_match": 90,
+        "notes": "Inspired by Libre",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      }
+    ]
+  },
+  {
+    "original": {
+      "name": "Sauvage",
+      "brand": "Dior",
+      "price": 120,
+      "notes": "Calabrian bergamot, Pepper | Sichuan Pepper, Lavender, Pink Pepper | Ambroxan, Cedar, Labdanum",
+      "image_url": "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80"
+    },
+    "dupes": [
+      {
+        "brand": "Armaf",
+        "name": "Ventana Pour Homme",
+        "price": 25,
+        "similarity_match": 88,
+        "notes": "Inspired by Sauvage",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Afnan",
+        "name": "Modest Une",
+        "price": 35,
+        "similarity_match": 92,
+        "notes": "Inspired by Sauvage",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Zara",
+        "name": "Aromatic Future",
+        "price": 15.95,
+        "similarity_match": 85,
+        "notes": "Inspired by Sauvage",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "La Rive",
+        "name": "Extreme Story",
+        "price": 10,
+        "similarity_match": 80,
+        "notes": "Inspired by Sauvage",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      }
+    ]
+  },
+  {
+    "original": {
+      "name": "Alien",
+      "brand": "Mugler",
+      "price": 100,
+      "notes": "Jasmine | Woody Notes | Amber",
+      "image_url": "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80"
+    },
+    "dupes": [
+      {
+        "brand": "Zara",
+        "name": "Violet Blossom",
+        "price": 15.95,
+        "similarity_match": 85,
+        "notes": "Inspired by Alien",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Superdrug",
+        "name": "Layering Lab Blossom",
+        "price": 10,
+        "similarity_match": 80,
+        "notes": "Inspired by Alien",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "La Rive",
+        "name": "Fleur de Femme",
+        "price": 12,
+        "similarity_match": 82,
+        "notes": "Inspired by Alien",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      }
+    ]
+  },
+  {
+    "original": {
+      "name": "Good Girl",
+      "brand": "Carolina Herrera",
+      "price": 115,
+      "notes": "Almond, Coffee, Bergamot | Tuberose, Jasmine Sambac, Orange Blossom | Tonka Bean, Cacao, Vanilla",
+      "image_url": "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80"
+    },
+    "dupes": [
+      {
+        "brand": "Zara",
+        "name": "Deep Garden",
+        "price": 15.95,
+        "similarity_match": 85,
+        "notes": "Inspired by Good Girl",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "M&S",
+        "name": "Midnight Blossom",
+        "price": 15,
+        "similarity_match": 82,
+        "notes": "Inspired by Good Girl",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Maison Alhambra",
+        "name": "Bad Femme",
+        "price": 20,
+        "similarity_match": 90,
+        "notes": "Inspired by Good Girl",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      }
+    ]
+  },
+  {
+    "original": {
+      "name": "Gypsy Water",
+      "brand": "Byredo",
+      "price": 195,
+      "notes": "Bergamot, Lemon, Pepper, Juniper | Incense, Pine Needles, Orris | Amber, Vanilla, Sandalwood",
+      "image_url": "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80"
+    },
+    "dupes": [
+      {
+        "brand": "Zara",
+        "name": "Waterlily Tea Dress",
+        "price": 22.95,
+        "similarity_match": 82,
+        "notes": "Inspired by Gypsy Water",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Oakcha",
+        "name": "Morning Rain",
+        "price": 40,
+        "similarity_match": 90,
+        "notes": "Inspired by Gypsy Water",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Dossier",
+        "name": "Woody Sandalwood",
+        "price": 39,
+        "similarity_match": 88,
+        "notes": "Inspired by Gypsy Water",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      }
+    ]
+  },
+  {
+    "original": {
+      "name": "Santal 33",
+      "brand": "Le Labo",
+      "price": 215,
+      "notes": "Cardamom, Iris, Violet | Sandalwood, Papyrus, Cedar | Leather, Amber, Iris",
+      "image_url": "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80"
+    },
+    "dupes": [
+      {
+        "brand": "Zara",
+        "name": "Energetically New York",
+        "price": 22.95,
+        "similarity_match": 85,
+        "notes": "Inspired by Santal 33",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Maison Crivelli",
+        "name": "Santal Volcanique",
+        "price": 180,
+        "similarity_match": 80,
+        "notes": "Inspired by Santal 33",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Dossier",
+        "name": "Woody Sandalwood",
+        "price": 39,
+        "similarity_match": 90,
+        "notes": "Inspired by Santal 33",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      }
+    ]
+  },
+  {
+    "original": {
+      "name": "Portrait of a Lady",
+      "brand": "Frederic Malle",
+      "price": 280,
+      "notes": "Rose, Clove, Raspberry | Patchouli, Incense, Sandalwood | Musk, Amber",
+      "image_url": "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80"
+    },
+    "dupes": [
+      {
+        "brand": "Zara",
+        "name": "Rose Petal Drops",
+        "price": 22.95,
+        "similarity_match": 80,
+        "notes": "Inspired by Portrait of a Lady",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Afnan",
+        "name": "Supremacy Incense",
+        "price": 45,
+        "similarity_match": 85,
+        "notes": "Inspired by Portrait of a Lady",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      }
+    ]
+  },
+  {
+    "original": {
+      "name": "Layton",
+      "brand": "Parfums de Marly",
+      "price": 225,
+      "notes": "Apple, Lavender, Bergamot | Geranium, Violet, Jasmine | Vanilla, Cardamom, Sandalwood",
+      "image_url": "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80"
+    },
+    "dupes": [
+      {
+        "brand": "Lalique",
+        "name": "White in Black",
+        "price": 50,
+        "similarity_match": 88,
+        "notes": "Inspired by Layton",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Al Haramain",
+        "name": "Detour Noir",
+        "price": 35,
+        "similarity_match": 95,
+        "notes": "Inspired by Layton",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Maison Alhambra",
+        "name": "Leyden",
+        "price": 25,
+        "similarity_match": 92,
+        "notes": "Inspired by Layton",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      }
+    ]
+  },
+  {
+    "original": {
+      "name": "Erba Pura",
+      "brand": "Xerjoff",
+      "price": 230,
+      "notes": "Sicilian Orange, Calabrian bergamot | Fruits | White Musk, Madagascar Vanilla, Amber",
+      "image_url": "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80"
+    },
+    "dupes": [
+      {
+        "brand": "Lattafa",
+        "name": "Ana Abiyedh",
+        "price": 20,
+        "similarity_match": 88,
+        "notes": "Inspired by Erba Pura",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Al Haramain",
+        "name": "Amber Oud Gold Edition",
+        "price": 60,
+        "similarity_match": 95,
+        "notes": "Inspired by Erba Pura",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Armaf",
+        "name": "Club de Nuit Untold",
+        "price": 58,
+        "similarity_match": 80,
+        "notes": "Inspired by Erba Pura",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      }
+    ]
+  },
+  {
+    "original": {
+      "name": "Bubble Bath",
+      "brand": "Maison Margiela",
+      "price": 125,
+      "notes": "Soap, Bergamot | Lavender, Rose, Jasmine | Coconut, White Musk, Patchouli",
+      "image_url": "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80"
+    },
+    "dupes": [
+      {
+        "brand": "Zara",
+        "name": "A Perfume in Rose",
+        "price": 22.95,
+        "similarity_match": 82,
+        "notes": "Inspired by Bubble Bath",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      }
+    ]
+  },
+  {
+    "original": {
+      "name": "J'adore",
+      "brand": "Dior",
+      "price": 130,
+      "notes": "Pear, Melon, Magnolia | Jasmine, Lily-of-the-Valley, Tuberose | Musk, Vanilla, Blackberry",
+      "image_url": "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80"
+    },
+    "dupes": [
+      {
+        "brand": "Zara",
+        "name": "Rose",
+        "price": 15.95,
+        "similarity_match": 85,
+        "notes": "Inspired by J'adore",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "La Rive",
+        "name": "In Woman",
+        "price": 12,
+        "similarity_match": 80,
+        "notes": "Inspired by J'adore",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Superdrug",
+        "name": "Artiscent Atelier Spring Muget",
+        "price": 15,
+        "similarity_match": 82,
+        "notes": "Inspired by J'adore",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      }
+    ]
+  },
+  {
+    "original": {
+      "name": "1 Million",
+      "brand": "Paco Rabanne",
+      "price": 95,
+      "notes": "Blood Mandarin, Grapefruit, Mint | Cinnamon, Spicy Notes, Rose | Amber, Leather, Woody Notes",
+      "image_url": "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80"
+    },
+    "dupes": [
+      {
+        "brand": "Zara",
+        "name": "Uomo",
+        "price": 15.95,
+        "similarity_match": 85,
+        "notes": "Inspired by 1 Million",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Armaf",
+        "name": "Club de Nuit Man",
+        "price": 30,
+        "similarity_match": 88,
+        "notes": "Inspired by 1 Million",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "La Rive",
+        "name": "Cash",
+        "price": 12,
+        "similarity_match": 80,
+        "notes": "Inspired by 1 Million",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      }
+    ]
+  },
+  {
+    "original": {
+      "name": "Bleu de Chanel",
+      "brand": "Chanel",
+      "price": 120,
+      "notes": "Grapefruit, Lemon, Mint | Ginger, Nutmeg, Jasmine | Incense, Vetiver, Cedar",
+      "image_url": "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80"
+    },
+    "dupes": [
+      {
+        "brand": "Armaf",
+        "name": "Club de Nuit Iconic",
+        "price": 45,
+        "similarity_match": 92,
+        "notes": "Inspired by Bleu de Chanel",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Zara",
+        "name": "Navy Black",
+        "price": 15.95,
+        "similarity_match": 82,
+        "notes": "Inspired by Bleu de Chanel",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Missoni",
+        "name": "Pour Homme",
+        "price": 40,
+        "similarity_match": 85,
+        "notes": "Inspired by Bleu de Chanel",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      }
+    ]
+  },
+  {
+    "original": {
+      "name": "Chloe Eau de Parfum",
+      "brand": "Chloe",
+      "price": 110,
+      "notes": "Peony, Litchi, Freesia | Rose, Lily-of-the-Valley, Magnolia | Virginia Cedar, Amber",
+      "image_url": "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80"
+    },
+    "dupes": [
+      {
+        "brand": "Zara",
+        "name": "Powdery Magnolia",
+        "price": 15.95,
+        "similarity_match": 88,
+        "notes": "Inspired by Chloe Eau de Parfum",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "La Rive",
+        "name": "Cuté",
+        "price": 12,
+        "similarity_match": 85,
+        "notes": "Inspired by Chloe Eau de Parfum",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      }
+    ]
+  },
+  {
+    "original": {
+      "name": "Light Blue",
+      "brand": "Dolce & Gabbana",
+      "price": 90,
+      "notes": "Sicilian Lemon, Apple, Cedar | Bamboo, Jasmine, White Rose | Cedar, Musk, Amber",
+      "image_url": "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80"
+    },
+    "dupes": [
+      {
+        "brand": "Zara",
+        "name": "Applejuice",
+        "price": 15.95,
+        "similarity_match": 90,
+        "notes": "Inspired by Light Blue",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Moschino",
+        "name": "I Love Love",
+        "price": 40,
+        "similarity_match": 85,
+        "notes": "Inspired by Light Blue",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      }
+    ]
+  },
+  {
+    "original": {
+      "name": "Acqua Di Gio",
+      "brand": "Giorgio Armani",
+      "price": 95,
+      "notes": "Lime, Lemon, Bergamot | Sea Notes, Jasmine, Calone | White Musk, Cedar, Oakmoss",
+      "image_url": "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80"
+    },
+    "dupes": [
+      {
+        "brand": "Zara",
+        "name": "Lisboa",
+        "price": 15.95,
+        "similarity_match": 85,
+        "notes": "Inspired by Acqua Di Gio",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Perry Ellis",
+        "name": "360 Red for Men",
+        "price": 30,
+        "similarity_match": 90,
+        "notes": "Inspired by Acqua Di Gio",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Armaf",
+        "name": "Blue Homme",
+        "price": 25,
+        "similarity_match": 88,
+        "notes": "Inspired by Acqua Di Gio",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      }
+    ]
+  },
+  {
+    "original": {
+      "name": "Olympea",
+      "brand": "Paco Rabanne",
+      "price": 95,
+      "notes": "Water Jasmine, Green Mandarin | Vanilla, Salt | Cashmere Wood, Ambergris",
+      "image_url": "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80"
+    },
+    "dupes": [
+      {
+        "brand": "Zara",
+        "name": "Fields at Nightfall",
+        "price": 22.95,
+        "similarity_match": 88,
+        "notes": "Inspired by Olympea",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "La Rive",
+        "name": "In Flames",
+        "price": 12,
+        "similarity_match": 85,
+        "notes": "Inspired by Olympea",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "brand": "Superdrug",
+        "name": "Layering Lab Paradise",
+        "price": 10,
+        "similarity_match": 82,
+        "notes": "Inspired by Olympea",
+        "image_url": "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80"
+      }
+    ]
+  }
+]

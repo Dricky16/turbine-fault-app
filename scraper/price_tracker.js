@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { Resend } from 'resend';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -12,10 +13,12 @@ const supabaseUrl = process.env.VITE_SUPABASE_URL;
 const supabaseKey = process.env.VITE_SUPABASE_SERVICE_ROLE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+// Initialize Resend with API Key from environment (or hardcoded for testing)
+const resend = new Resend(process.env.RESEND_API_KEY);
+
 async function run() {
   console.log("Starting nightly price tracker for User Favorites...");
   
-  // 1. Fetch all favorites
   const { data: favorites, error } = await supabase
     .from('favorites')
     .select(`
@@ -37,23 +40,56 @@ async function run() {
     console.log(`Checking price for ${perfume.brand} ${perfume.name}...`);
     
     // --> ATTACH SCRAPER LOGIC HERE <--
-    // Scrape Brown Thomas or Notino to get current live price
-    const livePrice = 250; // Mock current price
+    // Mock scraping logic for testing: Assume it went on a massive sale
+    const livePrice = Math.floor(perfume.price * 0.70); // 30% off
     
-    // If live price is at least 15% cheaper than the retail price in our DB
     const discountThreshold = perfume.price * 0.85; 
     
     if (livePrice <= discountThreshold) {
-      console.log(`SALE DETECTED! ${perfume.name} dropped to ${livePrice}`);
+      console.log(`SALE DETECTED! ${perfume.name} dropped to €${livePrice}`);
       
-      // Fetch user's email using Admin API
       const { data: userData } = await supabase.auth.admin.getUserById(fav.user_id);
       const userEmail = userData?.user?.email;
       
       if (userEmail) {
-        // --> TRIGGER EMAIL HERE <--
-        // Send email telling them a perfume on their Favorites list is on sale!
-        console.log(`Emailed ${userEmail} about the sale.`);
+        console.log(`Sending email alert to ${userEmail}...`);
+        
+        try {
+          const { data: emailResponse, error: emailError } = await resend.emails.send({
+            from: 'Scents For Cents <onboarding@resend.dev>',
+            to: userEmail,
+            subject: `SALE ALERT: ${perfume.brand} ${perfume.name} is on sale!`,
+            html: `
+              <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; text-align: center;">
+                <h1 style="color: #0f172a;">Great news!</h1>
+                <p style="font-size: 16px; color: #475569;">
+                  A perfume on your <strong>Scents for Cents</strong> favorites list is on sale!
+                </p>
+                <div style="background-color: #f8fafc; padding: 20px; border-radius: 12px; margin: 30px 0;">
+                  <h2 style="margin: 0; color: #1e293b;">${perfume.name}</h2>
+                  <p style="color: #64748b; margin-top: 5px;">by ${perfume.brand}</p>
+                  
+                  <div style="margin-top: 20px; font-size: 24px; font-weight: bold; color: #0f172a;">
+                    <span style="text-decoration: line-through; color: #94a3b8; font-size: 18px;">€${perfume.price.toFixed(2)}</span>
+                    <span style="color: #10b981; margin-left: 10px;">€${livePrice.toFixed(2)}</span>
+                  </div>
+                </div>
+                
+                <a href="${perfume.affiliate_link}" style="display: inline-block; background-color: #0f172a; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+                  Buy Now
+                </a>
+              </div>
+            `
+          });
+          
+          if (emailError) {
+            console.error("Resend Error:", emailError);
+          } else {
+            console.log(`Successfully emailed ${userEmail}! ID: ${emailResponse.id}`);
+          }
+        } catch (e) {
+          console.error("Failed to send email:", e);
+        }
       }
     }
   }

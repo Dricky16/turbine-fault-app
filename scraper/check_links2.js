@@ -1,0 +1,21 @@
+import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.resolve(__dirname, '../.env.local') });
+
+const supabaseUrl = process.env.VITE_SUPABASE_URL;
+const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+async function run() {
+  const { data: p } = await supabase.from('perfumes').select('*').ilike('name', '%Naxos%');
+  console.log("Perfumes:", p);
+  
+  const { data: d } = await supabase.from('dupes').select('*').ilike('brand', '%Alexandria%');
+  console.log("Dupes:", d);
+}
+run();
