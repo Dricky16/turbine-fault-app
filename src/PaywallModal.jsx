@@ -82,9 +82,9 @@ export default function PaywallModal({ isOpen, onClose, userId }) {
             <button
               onClick={() => handleUpgrade('yearly')}
               disabled={loadingType !== null}
-              className="w-full relative bg-gold-500 text-luxury-950 pt-7 pb-3 px-4 rounded-xl font-bold text-lg hover:bg-gold-400 focus:ring-4 focus:ring-gold-200 transition-all shadow-md overflow-hidden border-2 border-gold-600 flex flex-col items-center justify-center gap-1"
+              className="w-full relative bg-gold-500 text-luxury-950 py-4 px-4 rounded-xl font-bold text-lg hover:bg-gold-400 focus:ring-4 focus:ring-gold-200 transition-all shadow-md border-2 border-gold-600 flex flex-col items-center justify-center mt-6"
             >
-              <div className="absolute top-0 left-0 right-0 bg-rose-500 text-white text-[10px] uppercase tracking-wider font-bold py-1 text-center">
+              <div className="absolute -top-3 bg-rose-500 text-white text-[11px] uppercase tracking-wider font-bold px-4 py-1 rounded-full shadow-sm border border-rose-600">
                 Best Value (Save 15%)
               </div>
               <span>{loadingType === 'yearly' ? 'Redirecting...' : 'Yearly — €40.00 / year'}</span>
