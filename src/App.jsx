@@ -32,7 +32,43 @@ function App() {
   });
   const [legalModalType, setLegalModalType] = useState(null);
   const [deferredPrompt, setDeferredPrompt] = useState(null); // 'IE' or 'UK'
+  
   const [favorites, setFavorites] = useState([]);
+
+  // Android/PWA Back Button Handler
+  useEffect(() => {
+    const handlePopState = (e) => {
+      if (e.state) {
+        if (e.state.view === 'home') {
+          setOriginal(null);
+          setDupes([]);
+          setSearchResultsList([]);
+          setHasSearched(false);
+          setSearchTerm('');
+        } else if (e.state.view === 'search') {
+          setOriginal(null);
+          setDupes([]);
+          // searchResultsList remains active
+        }
+      } else {
+        // Fallback: just clear everything and go home
+        setOriginal(null);
+        setDupes([]);
+        setSearchResultsList([]);
+        setHasSearched(false);
+        setSearchTerm('');
+      }
+    };
+    
+    // Push the initial home state if it doesn't exist
+    if (!window.history.state) {
+      window.history.replaceState({ view: 'home' }, '', '');
+    }
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
 
 
   const getFallbackUrl = (brand, name, region) => {
@@ -209,7 +245,7 @@ function App() {
   };
 
   const selectPerfume = async (selectedOriginal) => {
-    setSearchResultsList([]);
+    window.history.pushState({ view: 'perfume' }, '', '');
     setLoading(true);
     try {
       setOriginal(selectedOriginal);
@@ -234,6 +270,7 @@ function App() {
     
     setSearchTerm(term);
     setHasSearched(true);
+    window.history.pushState({ view: 'search' }, '', '');
     setLoading(true);
     setError(null);
     setOriginal(null);
