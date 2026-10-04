@@ -246,6 +246,7 @@ function App() {
 
   const selectPerfume = async (selectedOriginal) => {
     window.history.pushState({ view: 'perfume' }, '', '');
+    setSearchResultsList([]);
     setLoading(true);
     try {
       setOriginal(selectedOriginal);
@@ -620,7 +621,8 @@ function App() {
                       </div>
                     )}
                     <span className="text-luxury-500 text-xs tracking-widest uppercase mb-1">{perfume.brand}</span>
-                    <h3 className="font-serif text-lg text-luxury-900 leading-tight">{perfume.name}</h3>
+                    <h3 className="font-serif text-lg text-luxury-900 leading-tight mb-2">{perfume.name}</h3>
+                    {perfume.price && <span className="font-bold text-luxury-900">{formatPrice(perfume.price)}</span>}
                   </div>
                 ))}
               </div>
