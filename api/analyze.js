@@ -21,7 +21,12 @@ export default async function handler(req, res) {
         }
       ]
     });
-    const identifiedName = response.text.trim();
+    const rawText = response.text || (response.candidates && response.candidates[0]?.content?.parts?.[0]?.text) || "";
+    if (!rawText) {
+      console.error("Gemini returned empty or blocked response:", JSON.stringify(response));
+      return res.status(500).json({ error: 'Image analysis blocked or returned no text. Please try again.' });
+    }
+    const identifiedName = rawText.trim();
     res.json({ identifiedName });
   } catch (error) {
     console.error('Error analyzing image:', error);
