@@ -659,7 +659,11 @@ function App() {
                   <div className="inline-block px-3 py-1 bg-luxury-100 text-luxury-700 text-xs font-bold tracking-wider uppercase rounded-full mb-3">Original</div>
                   <h2 className="font-serif text-3xl font-bold text-luxury-900 mb-1">{original.name}</h2>
                   <p className="text-luxury-600 text-lg mb-4">by {original.brand}</p>
-                  <p className="text-2xl text-luxury-900 font-semibold mb-4">{formatPrice(original.price)} <span className="text-sm font-normal text-luxury-400">Retail</span></p>
+                  {original.price ? (
+                    <p className="text-2xl text-luxury-900 font-semibold mb-4">{formatPrice(original.price)} <span className="text-sm font-normal text-luxury-400">Retail</span></p>
+                  ) : (
+                    <p className="text-lg font-medium text-luxury-500 mb-4 mt-2">Retail price currently unavailable</p>
+                  )}
                   {original.notes && (
                     <div className="bg-luxury-50 p-4 rounded-xl border border-luxury-100 mt-2">
                       <p className="text-sm text-luxury-800"><span className="font-bold">Notes:</span> {original.notes}</p>
@@ -738,10 +742,12 @@ function App() {
                           </div>
                           
                           {/* Savings Badge */}
-                          <div className="flex items-center gap-1.5 bg-luxury-100 text-luxury-800 px-3 py-1.5 rounded-lg text-sm font-semibold border border-luxury-200">
-                            <Tag size={16} />
-                            Save {formatPrice(parseFloat(original.price) - parseFloat(dupe.price))}
-                          </div>
+                          {original?.price && dupe?.price && !isNaN(parseFloat(original.price)) && !isNaN(parseFloat(dupe.price)) && (
+                            <div className="flex items-center gap-1.5 bg-luxury-100 text-luxury-800 px-3 py-1.5 rounded-lg text-sm font-semibold border border-luxury-200">
+                              <Tag size={16} />
+                              Save {formatPrice(parseFloat(original.price) - parseFloat(dupe.price))}
+                            </div>
+                          )}
                         </div>
 
                         {dupe.notes && (
@@ -753,7 +759,7 @@ function App() {
 
                       <div className="flex flex-col items-center justify-center border-t sm:border-t-0 sm:border-l border-luxury-100 w-full sm:w-auto pt-6 sm:pt-0 sm:pl-8">
                         <div className="text-3xl font-bold text-luxury-900 mb-3">
-                          {formatPrice(dupe.price)}
+                          {dupe.price ? formatPrice(dupe.price) : <span className="text-xl font-medium text-luxury-500">Prices vary</span>}
                         </div>
                         {['Aldi', 'Lidl'].includes(dupe.brand) ? (
                           <div className="w-full flex items-center justify-center gap-2 bg-luxury-100 text-luxury-600 px-6 py-3 rounded-xl font-medium whitespace-nowrap cursor-not-allowed">
