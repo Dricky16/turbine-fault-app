@@ -21,7 +21,7 @@ export default async function handler(req, res) {
         }
       ]
     });
-    const identifiedName = response.text().trim();
+    const identifiedName = response.text.trim();
     res.json({ identifiedName });
   } catch (error) {
     console.error('Error analyzing image:', error);
