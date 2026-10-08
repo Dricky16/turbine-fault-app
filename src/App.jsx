@@ -229,11 +229,24 @@ function App() {
       
     // Fetch all premium perfumes for the home screen
     const fetchPerfumes = async () => {
-      const { data } = await supabase
-        .from('perfumes')
-        .select('*')
-        .order('name', { ascending: true }).limit(3000);
-      if (data) setAllPerfumes(data);
+      let allData = [];
+      let page = 0;
+      while (true) {
+        const { data } = await supabase
+          .from('perfumes')
+          .select('*')
+          .order('name', { ascending: true })
+          .range(page * 1000, (page + 1) * 1000 - 1);
+        
+        if (data && data.length > 0) {
+          allData = [...allData, ...data];
+          if (data.length < 1000) break;
+          page++;
+        } else {
+          break;
+        }
+      }
+      setAllPerfumes(allData);
     };
     fetchPerfumes();
   }, []);
