@@ -280,10 +280,27 @@ function App() {
 
     try {
       // 1. Try searching the 'perfumes' table (Originals) by name OR brand
-      const { data: perfumesData, error: perfumeError } = await supabase
+      // 1. Try searching the 'perfumes' table (Originals) by name OR brand
+      const searchWords = term.trim().toLowerCase().split(/\s+/).filter(w => w.length > 1);
+      const ilikeParts = searchWords.map(w => `name.ilike.%${w}%,brand.ilike.%${w}%`);
+      const orQuery = ilikeParts.join(',');
+
+      let { data: perfumesData, error: perfumeError } = await supabase
         .from('perfumes')
         .select('*')
-        .or(`name.ilike.%${term.trim()}%,brand.ilike.%${term.trim()}%`);
+        .or(orQuery);
+        
+      if (perfumesData) {
+        perfumesData.forEach(p => {
+          const pString = `${p.brand} ${p.name}`.toLowerCase();
+          p.score = searchWords.filter(w => pString.includes(w)).length;
+          // Boost if the exact term is found as a substring
+          if (pString.includes(term.toLowerCase().trim())) p.score += 10;
+        });
+        // Sort highest score first, only keep those with > 50% word match
+        perfumesData = perfumesData.filter(p => p.score >= Math.ceil(searchWords.length / 2));
+        perfumesData.sort((a, b) => b.score - a.score);
+      }
 
       if (perfumesData && perfumesData.length > 0) {
         if (perfumesData.length === 1) {
@@ -293,10 +310,21 @@ function App() {
         }
       } else {
         // 2. If not found in originals, search the 'dupes' table by name OR brand
-        const { data: dupesData, error: dupeError } = await supabase
+        // 2. If not found in originals, search the 'dupes' table by name OR brand
+        let { data: dupesData, error: dupeError } = await supabase
           .from('dupes')
-          .select('original_id')
-          .or(`name.ilike.%${term.trim()}%,brand.ilike.%${term.trim()}%`);
+          .select('original_id, brand, name')
+          .or(orQuery);
+          
+        if (dupesData) {
+          dupesData.forEach(p => {
+            const pString = `${p.brand} ${p.name}`.toLowerCase();
+            p.score = searchWords.filter(w => pString.includes(w)).length;
+            if (pString.includes(term.toLowerCase().trim())) p.score += 10;
+          });
+          dupesData = dupesData.filter(p => p.score >= Math.ceil(searchWords.length / 2));
+          dupesData.sort((a, b) => b.score - a.score);
+        }
           
         if (dupesData && dupesData.length > 0) {
           const uniqueOriginalIds = [...new Set(dupesData.map(d => d.original_id))];
