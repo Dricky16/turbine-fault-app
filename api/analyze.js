@@ -27,7 +27,7 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'Image analysis blocked or returned no text. Please try again.' });
     }
     const identifiedName = rawText.trim();
-    res.json({ identifiedName });
+    res.json({ name: identifiedName });
   } catch (error) {
     console.error('Error analyzing image:', error);
     res.status(500).json({ error: 'Failed to analyze image' });
