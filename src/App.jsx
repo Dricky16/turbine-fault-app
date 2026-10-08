@@ -232,7 +232,7 @@ function App() {
       const { data } = await supabase
         .from('perfumes')
         .select('*')
-        .order('name', { ascending: true });
+        .order('name', { ascending: true }).limit(3000);
       if (data) setAllPerfumes(data);
     };
     fetchPerfumes();
@@ -302,7 +302,7 @@ function App() {
         perfumesData.sort((a, b) => b.score - a.score);
         if (perfumesData.length > 0) {
           const topScore = perfumesData[0].score;
-          perfumesData = perfumesData.filter(p => p.score >= topScore - 2).slice(0, 10);
+          perfumesData = perfumesData.filter(p => p.score >= topScore - 2);
         }
       }
 
@@ -331,7 +331,7 @@ function App() {
           dupesData.sort((a, b) => b.score - a.score);
           if (dupesData.length > 0) {
             const topScore = dupesData[0].score;
-            dupesData = dupesData.filter(p => p.score >= topScore - 2).slice(0, 10);
+            dupesData = dupesData.filter(p => p.score >= topScore - 2);
           }
         }
           
