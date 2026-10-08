@@ -266,7 +266,7 @@ function App() {
     }
   };
 
-  const executeSearch = async (term) => {
+  const executeSearch = async (term, isCamera = false) => {
     if (!term.trim()) return;
     
     setSearchTerm(term);
@@ -300,10 +300,15 @@ function App() {
         // Sort highest score first, only keep those with > 50% word match
         perfumesData = perfumesData.filter(p => p.score >= Math.ceil(searchWords.length / 2));
         perfumesData.sort((a, b) => b.score - a.score);
+        if (perfumesData.length > 0) {
+          const topScore = perfumesData[0].score;
+          perfumesData = perfumesData.filter(p => p.score >= topScore - 2).slice(0, 10);
+        }
       }
 
       if (perfumesData && perfumesData.length > 0) {
-        if (perfumesData.length === 1) {
+        // If camera scan OR exact definitive match, auto-select the best one
+        if (isCamera || perfumesData.length === 1 || (perfumesData[0].score >= 10 && perfumesData[0].score > (perfumesData[1]?.score || 0))) {
           await selectPerfume(perfumesData[0]);
         } else {
           setSearchResultsList(perfumesData);
@@ -324,6 +329,10 @@ function App() {
           });
           dupesData = dupesData.filter(p => p.score >= Math.ceil(searchWords.length / 2));
           dupesData.sort((a, b) => b.score - a.score);
+          if (dupesData.length > 0) {
+            const topScore = dupesData[0].score;
+            dupesData = dupesData.filter(p => p.score >= topScore - 2).slice(0, 10);
+          }
         }
           
         if (dupesData && dupesData.length > 0) {
@@ -334,10 +343,12 @@ function App() {
             .select('*')
             .in('id', uniqueOriginalIds);
             
-          if (mappedOriginals && mappedOriginals.length === 1) {
-            await selectPerfume(mappedOriginals[0]);
-          } else if (mappedOriginals && mappedOriginals.length > 1) {
-            setSearchResultsList(mappedOriginals);
+          if (mappedOriginals && mappedOriginals.length > 0) {
+            if (isCamera || mappedOriginals.length === 1) {
+              await selectPerfume(mappedOriginals[0]);
+            } else {
+              setSearchResultsList(mappedOriginals);
+            }
           } else {
             setOriginal(null);
           }
@@ -427,7 +438,7 @@ function App() {
       console.log("Identified perfume:", identifiedName);
       
       // Execute the normal search flow using the AI's answer
-      await executeSearch(identifiedName);
+      await executeSearch(identifiedName, true);
 
     } catch (err) {
       console.error("AI processing error:", err);
