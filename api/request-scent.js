@@ -3,6 +3,7 @@ import { Resend } from 'resend';
 
 
 export default async function handler(req, res) {
+  if (!process.env.RESEND_API_KEY) return res.status(500).json({ error: 'Missing RESEND_API_KEY on server' });
   const resend = new Resend(process.env.RESEND_API_KEY);
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
