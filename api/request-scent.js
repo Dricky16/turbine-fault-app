@@ -18,13 +18,13 @@ export default async function handler(req, res) {
       from: 'Scents for Cents <onboarding@resend.dev>',
       to: 'conorodriscoll3@gmail.com', // The app owner's email
       subject: `New Scent Request: ${scentName}`,
-      html: \`
+      html: `
         <h2>New Scent Request</h2>
         <p>A user has requested a new scent to be added to the database!</p>
         <br/>
-        <p><strong>Perfume:</strong> \${scentName}</p>
-        <p><strong>Brand:</strong> \${brand || 'Not specified'}</p>
-      \`
+        <p><strong>Perfume:</strong> ${scentName}</p>
+        <p><strong>Brand:</strong> ${brand || 'Not specified'}</p>
+      `
     });
 
     if (error) {
