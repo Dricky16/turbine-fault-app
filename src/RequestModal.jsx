@@ -17,16 +17,15 @@ export default function RequestModal({ isOpen, onClose }) {
     setError(null);
     
     try {
-      const response = await fetch('https://api.web3forms.com/submit', {
+      const response = await fetch('/api/request-scent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json'
         },
         body: JSON.stringify({
-          access_key: 'afdabc4c-b1a1-4645-9435-fcf134ef26c5',
-          subject: `New Scent Request: ${scentName}`,
-          message: `A user has requested a new scent to be added to the database!\n\nPerfume: ${scentName}\nBrand: ${brand || 'Not specified'}`
+          scentName,
+          brand
         })
       });
       
