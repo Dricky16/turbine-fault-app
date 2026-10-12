@@ -7,6 +7,6 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Pass-through fetch for PWA requirement
-  event.respondWith(fetch(event.request).catch(() => new Response('Offline')));
+  // Pass-through fetch for PWA installation requirement
+  event.respondWith(fetch(event.request));
 });
