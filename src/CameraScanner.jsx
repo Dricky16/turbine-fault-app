@@ -1,9 +1,10 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Camera, X, RefreshCcw } from 'lucide-react';
+import { Camera, X, RefreshCcw, Image as ImageIcon } from 'lucide-react';
 
 export default function CameraScanner({ onClose, onCapture }) {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
+  const fileInputRef = useRef(null);
   const [error, setError] = useState(null);
   const [stream, setStream] = useState(null);
 
@@ -16,17 +17,35 @@ export default function CameraScanner({ onClose, onCapture }) {
 
   const startCamera = async () => {
     setError(null);
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      setError("Live camera streaming is not supported in this browser. You can still take or upload a photo below.");
+      return;
+    }
+
     try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment' } // Prefer back camera
-      });
+      let mediaStream;
+      try {
+        mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: 'environment' } }
+        });
+      } catch (e) {
+        // Fallback for devices rejecting constraints
+        mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+      }
+
       setStream(mediaStream);
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
+        videoRef.current.setAttribute('playsinline', 'true');
+        try {
+          await videoRef.current.play();
+        } catch (playErr) {
+          console.warn("Autoplay was prevented:", playErr);
+        }
       }
     } catch (err) {
       console.error("Error accessing camera:", err);
-      setError("Unable to access camera. Please make sure you have granted permission.");
+      setError("Unable to access live camera stream. You can take or choose a photo using the button below.");
     }
   };
 
@@ -42,8 +61,8 @@ export default function CameraScanner({ onClose, onCapture }) {
       const canvas = canvasRef.current;
       
       // Set canvas dimensions to match video
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
+      canvas.width = video.videoWidth || 640;
+      canvas.height = video.videoHeight || 480;
       
       // Draw video frame to canvas
       const ctx = canvas.getContext('2d');
@@ -55,6 +74,18 @@ export default function CameraScanner({ onClose, onCapture }) {
       // Stop camera and pass image back
       stopCamera();
       onCapture(imageData);
+    }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        stopCamera();
+        onCapture(event.target.result);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -75,9 +106,18 @@ export default function CameraScanner({ onClose, onCapture }) {
           {error ? (
             <div className="text-center p-8">
               <p className="text-red-400 mb-4">{error}</p>
-              <button onClick={startCamera} className="flex items-center gap-2 mx-auto bg-white/10 px-4 py-2 rounded-full text-white hover:bg-white/20">
-                <RefreshCcw size={18} /> Retry
-              </button>
+              <div className="flex flex-col gap-3 items-center">
+                <button onClick={startCamera} className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full text-white hover:bg-white/20">
+                  <RefreshCcw size={18} /> Retry Camera
+                </button>
+                <button 
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()} 
+                  className="flex items-center gap-2 bg-white text-luxury-900 px-5 py-2.5 rounded-full font-semibold hover:bg-luxury-100 shadow-lg"
+                >
+                  <ImageIcon size={18} /> Take or Choose Photo
+                </button>
+              </div>
             </div>
           ) : (
             <video 
@@ -103,20 +143,40 @@ export default function CameraScanner({ onClose, onCapture }) {
         </div>
 
         {/* Controls */}
-        <div className="py-8 flex justify-center">
-          <button 
-            onClick={handleCapture}
-            disabled={!!error}
-            className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center border-4 border-white/50 hover:bg-white/30 hover:border-white transition-all disabled:opacity-50"
-          >
-            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-luxury-900 shadow-lg">
-              <Camera size={32} />
-            </div>
-          </button>
+        <div className="py-6 flex flex-col items-center gap-3">
+          <div className="flex items-center gap-6">
+            <button 
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="w-12 h-12 bg-white/15 rounded-full text-white hover:bg-white/25 transition flex items-center justify-center shadow"
+              title="Upload from Photo Library or Take Photo"
+            >
+              <ImageIcon size={22} />
+            </button>
+            <button 
+              onClick={handleCapture}
+              disabled={!!error}
+              className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center border-4 border-white/50 hover:bg-white/30 hover:border-white transition-all disabled:opacity-50"
+            >
+              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-luxury-900 shadow-lg">
+                <Camera size={32} />
+              </div>
+            </button>
+            <div className="w-12 h-12" /> {/* Spacer */}
+          </div>
+          <p className="text-xs text-white/60">Tap shutter to scan, or photo icon to choose from library</p>
         </div>
 
       </div>
       <canvas ref={canvasRef} className="hidden" />
+      <input 
+        type="file" 
+        accept="image/*" 
+        capture="environment" 
+        ref={fileInputRef} 
+        onChange={handleFileChange} 
+        className="hidden" 
+      />
     </div>
   );
 }
