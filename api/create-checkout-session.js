@@ -3,9 +3,13 @@ import Stripe from 'stripe';
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).send('Method Not Allowed');
   try {
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+    const secretKey = process.env.STRIPE_SECRET_KEY || process.env.VITE_STRIPE_SECRET_KEY;
+    if (!secretKey) {
+      return res.status(500).json({ error: 'Missing STRIPE_SECRET_KEY on server' });
+    }
+    const stripe = new Stripe(secretKey);
     const { userId, priceId } = req.body;
-    const origin = req.headers.origin || 'http://localhost:5173';
+    const origin = req.headers.origin || 'https://scentsforcents.ie';
     
     if (!priceId) {
       throw new Error('No price ID provided');
