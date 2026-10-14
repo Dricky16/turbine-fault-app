@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Sparkles, ExternalLink, Camera, ArrowRight, ShieldCheck, Percent, Tag, User, Heart } from 'lucide-react';
+import { Search, Sparkles, ExternalLink, Camera, ArrowRight, ArrowLeft, Home, ShieldCheck, Percent, Tag, User, Heart } from 'lucide-react';
 import AuthModal from './AuthModal';
 import PaywallModal from './PaywallModal';
 import { supabase } from './supabaseClient';
@@ -12,6 +12,16 @@ function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [original, setOriginal] = useState(null);
   const [dupes, setDupes] = useState([]);
+  
+  const resetToHome = () => {
+    setOriginal(null);
+    setDupes([]);
+    setSearchResultsList([]);
+    setHasSearched(false);
+    setSearchTerm('');
+    setError(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
   
 
   const [searchResultsList, setSearchResultsList] = useState([]);
@@ -482,9 +492,15 @@ function App() {
       
       {/* Navigation */}
       <nav className="p-6 flex justify-between items-center max-w-5xl mx-auto">
-        <div className="flex items-center gap-2">
-          {/* Logo icon kept small in corner, title moved to center */}
-          <Sparkles className="text-gold" size={24} />
+        <div 
+          onClick={resetToHome}
+          className="flex items-center gap-2 cursor-pointer group select-none"
+          title="Return to Home"
+        >
+          <Sparkles className="text-gold group-hover:rotate-12 transition-transform" size={24} />
+          <span className="font-serif font-bold text-luxury-900 tracking-wide text-lg sm:text-xl">
+            Scents for Cents
+          </span>
         </div>
         <div className="flex items-center gap-4">
           
@@ -655,6 +671,15 @@ function App() {
           
           {hasSearched && !loading && !error && searchResultsList.length > 0 && (
             <div className="bg-white border border-luxury-200 rounded-3xl p-6 md:p-12 shadow-sm mb-12">
+              <div className="flex items-center justify-between mb-8 pb-4 border-b border-luxury-100">
+                <button 
+                  onClick={resetToHome}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-luxury-100 hover:bg-luxury-200 text-luxury-900 rounded-full text-sm font-semibold transition-all shadow-sm"
+                >
+                  <ArrowLeft size={18} /> Back to All Fragrances
+                </button>
+                <span className="text-xs text-luxury-500 font-medium">Found {searchResultsList.length} matches</span>
+              </div>
               <h2 className="font-serif text-2xl text-luxury-900 mb-8 text-center">We found {searchResultsList.length} perfumes. Select one:</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {searchResultsList.map(perfume => (
@@ -685,18 +710,51 @@ function App() {
             <div className="bg-white border border-luxury-200 rounded-3xl p-12 text-center shadow-sm">
               <h2 className="font-serif text-2xl text-luxury-900 mb-2">We couldn't find that perfume.</h2>
               <p className="text-luxury-600 mb-6">Our database is growing every day. Try searching for another popular fragrance.</p>
-              <button 
-                onClick={handleCameraClick}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-luxury-900 text-white rounded-full font-medium hover:bg-luxury-800 transition-colors"
-              >
-                <Camera size={20} />
-                Try Scanning a Bottle
-              </button>
+              <div className="flex flex-wrap items-center justify-center gap-4">
+                <button 
+                  onClick={resetToHome}
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-luxury-100 hover:bg-luxury-200 text-luxury-900 rounded-full font-medium transition-colors"
+                >
+                  <ArrowLeft size={18} />
+                  Back to All Fragrances
+                </button>
+                <button 
+                  onClick={handleCameraClick}
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-luxury-900 text-white rounded-full font-medium hover:bg-luxury-800 transition-colors"
+                >
+                  <Camera size={20} />
+                  Try Scanning a Bottle
+                </button>
+              </div>
             </div>
           )}
 
           {hasSearched && !loading && !error && original && (
             <div className="animate-in fade-in slide-in-from-bottom-8 duration-500">
+              
+              {/* Back Navigation Bar for iPhone / Mobile */}
+              <div className="flex items-center justify-between mb-6">
+                <button 
+                  onClick={() => {
+                    if (searchResultsList && searchResultsList.length > 1) {
+                      setOriginal(null);
+                      setDupes([]);
+                    } else {
+                      resetToHome();
+                    }
+                  }}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-luxury-200 hover:border-gold text-luxury-900 rounded-full text-sm font-semibold shadow-sm transition-all hover:shadow"
+                >
+                  <ArrowLeft size={18} /> {searchResultsList && searchResultsList.length > 1 ? 'Back to Search Results' : 'Back to All Fragrances'}
+                </button>
+                
+                <button
+                  onClick={resetToHome}
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-luxury-600 hover:text-luxury-900 px-4 py-2 rounded-full hover:bg-luxury-100 transition-colors bg-white border border-luxury-200"
+                >
+                  <Home size={14} /> Home
+                </button>
+              </div>
               
               {/* Original Perfume Header */}
               <div className="bg-white rounded-3xl p-8 mb-8 shadow-sm border border-luxury-100 flex flex-col sm:flex-row items-center sm:items-start gap-6 relative overflow-hidden">
@@ -788,9 +846,9 @@ function App() {
                         
                         <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 mb-3">
                           {/* Similarity Badge */}
-                          <div className="flex items-center gap-1.5 bg-green-50 text-green-700 px-3 py-1.5 rounded-lg text-sm font-semibold border border-green-100">
-                            <ShieldCheck size={16} />
-                            {dupe.similarity_match}% Match
+                          <div className="flex items-center gap-1.5 bg-emerald-50 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-bold border border-emerald-200 shadow-sm">
+                            <ShieldCheck size={16} className="text-emerald-600" />
+                            {dupe.similarity_match || 90}% Match
                           </div>
                           
                           {/* Savings Badge */}
