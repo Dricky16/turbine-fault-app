@@ -1,9 +1,0 @@
-body {
-    margin: 0;
-    overflow: hidden;
-    background-color: #ff0000; /* Fallback red color */
-}
-
-canvas {
-    display: block;
-}
