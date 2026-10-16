@@ -57,8 +57,8 @@ export default function AuthModal({ isOpen, onClose }) {
           </h2>
           <p className="text-luxury-600 mb-8">
             {isSignUp 
-              ? 'Join Scents for Cents to unlock the AI camera.' 
-              : 'Sign in to access your premium features.'}
+              ? 'Create a free account to save your favorite dupes and scents.' 
+              : 'Sign in to access your saved favorites and features.'}
           </p>
 
           {error && (
