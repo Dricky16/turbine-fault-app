@@ -19,9 +19,12 @@ export default async function handler(req, res) {
       payment_method_types: ['card'],
       line_items: [{ price: priceId, quantity: 1 }],
       mode: 'subscription',
-      success_url: `${origin}/?success=true&userId=${userId}`,
+      success_url: `${origin}/?success=true&userId=${userId}&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/`,
       metadata: { userId },
+      subscription_data: {
+        metadata: { userId }
+      }
     });
     
     res.json({ url: session.url });

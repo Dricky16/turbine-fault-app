@@ -7,6 +7,7 @@ import CameraScanner from './CameraScanner';
 import RequestModal from './RequestModal';
 import { Filter } from 'lucide-react';
 import LegalModal from './LegalModal';
+import SubscriptionModal from './SubscriptionModal';
 
 function App() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -120,6 +121,7 @@ function App() {
   const [session, setSession] = useState(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
+  const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
   const [profile, setProfile] = useState(null);
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [sortMode, setSortMode] = useState('name-asc');
@@ -166,12 +168,13 @@ function App() {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('success') === 'true') {
       const uId = urlParams.get('userId');
+      const sessionId = urlParams.get('session_id');
       if (uId) {
-        // Upgrade them via our backend shortcut
+        // Upgrade them via our backend shortcut and link stripe_customer_id
         fetch('/api/upgrade-success', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId: uId })
+          body: JSON.stringify({ userId: uId, sessionId: sessionId || null })
         }).then(() => {
           // Remove the query string immediately so it doesn't double-fire
           window.history.replaceState({}, document.title, window.location.pathname);
@@ -483,6 +486,12 @@ function App() {
       <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
       <RequestModal isOpen={showRequestModal} onClose={() => setShowRequestModal(false)} />
       <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} userId={session?.user?.id} />
+      <SubscriptionModal 
+        isOpen={showSubscriptionModal} 
+        onClose={() => setShowSubscriptionModal(false)} 
+        userId={session?.user?.id} 
+        profile={profile} 
+      />
       {showCamera && (
         <CameraScanner 
           onClose={() => setShowCamera(false)}
@@ -520,13 +529,26 @@ function App() {
             </button>
           </div>
           {session ? (
-            <button 
-              onClick={() => supabase.auth.signOut()}
-              className="text-luxury-600 hover:text-luxury-900 text-sm font-medium flex items-center gap-2"
-            >
-              <User className="w-4 h-4" />
-              Sign Out
-            </button>
+            <div className="flex items-center gap-2">
+              {profile?.tier === 'premium' && (
+                <button 
+                  onClick={() => setShowSubscriptionModal(true)}
+                  className="bg-gold/15 hover:bg-gold/25 text-luxury-900 border border-gold/40 px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 transition-colors shadow-xs"
+                  title="Manage or Cancel Subscription"
+                >
+                  <Sparkles size={13} className="text-gold" />
+                  <span>Premium</span>
+                  <span className="text-[10px] text-luxury-500 font-medium underline">Manage</span>
+                </button>
+              )}
+              <button 
+                onClick={() => supabase.auth.signOut()}
+                className="text-luxury-600 hover:text-luxury-900 text-sm font-medium flex items-center gap-1.5"
+              >
+                <User className="w-4 h-4" />
+                Sign Out
+              </button>
+            </div>
           ) : (
             <button 
               onClick={() => setShowAuthModal(true)}
@@ -916,6 +938,11 @@ function App() {
               <button onClick={() => setLegalModalType('disclosure')} className="hover:text-gold transition-colors">Affiliate Disclosure</button>
               <button onClick={() => setLegalModalType('privacy')} className="hover:text-gold transition-colors">Privacy Policy</button>
               <button onClick={() => setLegalModalType('terms')} className="hover:text-gold transition-colors">Terms of Service</button>
+              {session && profile?.tier === 'premium' && (
+                <button onClick={() => setShowSubscriptionModal(true)} className="text-rose-600 hover:text-rose-800 transition-colors font-semibold">
+                  Cancel Subscription
+                </button>
+              )}
             </div>
             
             <div className="text-xs text-luxury-400 text-center md:text-right">
