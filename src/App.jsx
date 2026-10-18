@@ -83,37 +83,71 @@ function App() {
 
 
   const getFallbackUrl = (brand, name, region) => {
-    // Avoid duplicating brand if it's already in the name
-    const searchQuery = name.toLowerCase().includes(brand.toLowerCase()) ? name : `${brand} ${name}`;
+    const b = (brand || '').toLowerCase().trim();
+    const n = (name || '').trim();
+    const cleanName = n.replace(new RegExp('^' + b + '\\s+', 'i'), '').trim();
+    const searchQuery = cleanName.toLowerCase().includes(b) ? cleanName : `${brand} ${cleanName}`;
     const query = encodeURIComponent(searchQuery);
-    const b = brand.toLowerCase();
-    
+
     if (b.includes('zara')) {
       const zaraRegion = region === 'US' ? 'us/en' : (region === 'UK' ? 'uk/en' : 'ie/en');
-      return `https://www.zara.com/${zaraRegion}/search.html?searchTerm=${query}`;
+      return `https://www.zara.com/${zaraRegion}/search?searchTerm=${encodeURIComponent(cleanName)}`;
     }
-    
-    if (b.includes('ex nihilo') || b.includes('creed') || b.includes('tom ford') || b.includes('xerjoff') || b.includes('maison margiela') || b.includes('byredo') || b.includes('le labo') || b.includes('dior') || b.includes('chanel') || b.includes('ysl') || b.includes('giorgio armani') || b.includes('paco rabanne') || b.includes('mugler') || b.includes('carolina herrera') || b.includes('marc jacobs') || b.includes('jo malone') || b.includes('roja') || b.includes('parfums de marly')) {
-       if (region === 'US') return `https://www.saksfifthavenue.com/search?q=${query}`;
-       return region === 'UK' 
+
+    if (b.includes('marks & spencer') || b.includes('m&s')) {
+      return region === 'IE'
+        ? `https://www.marksandspencer.com/ie/search?q=${encodeURIComponent(cleanName + ' perfume')}`
+        : `https://www.marksandspencer.com/search?q=${encodeURIComponent(cleanName + ' perfume')}`;
+    }
+
+    if (b.includes('aldi') || b.includes('lidl')) {
+      const regLabel = region === 'UK' ? 'UK' : 'Ireland';
+      return `https://www.google.com/search?q=${encodeURIComponent('Buy ' + brand + ' ' + cleanName + ' perfume ' + regLabel)}`;
+    }
+
+    if (b.includes('dossier')) {
+      return `https://dossier.co/search?q=${encodeURIComponent(cleanName)}`;
+    }
+
+    if (b.includes('superdrug')) {
+      return `https://www.superdrug.com/search?q=${encodeURIComponent(cleanName)}`;
+    }
+
+    if (b.includes('jenny glow')) {
+      return region === 'UK'
+        ? `https://www.notino.co.uk/search/?exps=${encodeURIComponent('Jenny Glow ' + cleanName)}`
+        : `https://www.notino.ie/search/?exps=${encodeURIComponent('Jenny Glow ' + cleanName)}`;
+    }
+
+    if (b.includes('oakcha')) {
+      return `https://www.oakcha.com/search?q=${encodeURIComponent(cleanName)}`;
+    }
+
+    if (
+      b.includes('ex nihilo') || b.includes('creed') || b.includes('tom ford') ||
+      b.includes('xerjoff') || b.includes('maison margiela') || b.includes('byredo') ||
+      b.includes('le labo') || b.includes('dior') || b.includes('chanel') ||
+      b.includes('ysl') || b.includes('yves saint laurent') || b.includes('giorgio armani') ||
+      b.includes('paco rabanne') || b.includes('mugler') || b.includes('carolina herrera') ||
+      b.includes('marc jacobs') || b.includes('jo malone') || b.includes('roja') ||
+      b.includes('parfums de marly') || b.includes('kilian') || b.includes('diptyque') ||
+      b.includes('acqua di parma') || b.includes('maison francis kurkdjian') ||
+      b.includes('frederic malle') || b.includes('penhaligon') || b.includes('charlotte tilbury')
+    ) {
+      if (region === 'US') return `https://www.saksfifthavenue.com/search?q=${query}`;
+      return region === 'UK'
         ? `https://www.selfridges.com/GB/en/cat/?freeText=${query}`
         : `https://www.brownthomas.com/search/?q=${query}`;
     }
-    
-    if (b.includes('aldi') || b.includes('lidl') || b.includes('marks & spencer')) {
-      return `https://www.google.com/search?q=${encodeURIComponent('Buy ' + searchQuery + ' perfume ' + region)}`;
-    }
-    
-    if (b.includes('perry ellis') || b.includes('dossier')) {
-      const amz = region === 'US' ? 'com' : (region === 'UK' ? 'co.uk' : 'de');
-      return `https://www.amazon.${amz}/s?k=${query}`;
-    }
-    
-    // Default fallback: Jomashop for US, Notino for EU
-    if (region === 'US') {
+
+    // Universal dupe & fragrance fallback: Notino for IE/UK, Jomashop for US
+    if (region === 'UK') {
+      return `https://www.notino.co.uk/search/?exps=${query}`;
+    } else if (region === 'US') {
       return `https://www.jomashop.com/search?q=${query}`;
+    } else {
+      return `https://www.notino.ie/search/?exps=${query}`;
     }
-    return null;
   };
   const [error, setError] = useState(null);
   const [allPerfumes, setAllPerfumes] = useState([]);
@@ -894,11 +928,15 @@ function App() {
                           {dupe.price ? formatPrice(dupe.price) : <span className="text-xl font-medium text-luxury-500">Prices vary</span>}
                         </div>
                         {['Aldi', 'Lidl'].includes(dupe.brand) ? (
-                          <div className="w-full flex items-center justify-center gap-2 bg-luxury-100 text-luxury-600 px-6 py-3 rounded-xl font-medium whitespace-nowrap cursor-not-allowed">
-                            Available In-Store Only
-                          </div>
+                          <a 
+                            href={(region === 'UK' ? dupe.uk_affiliate_link : dupe.affiliate_link) || dupe.affiliate_link || getFallbackUrl(dupe.brand, dupe.name, region)}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="w-full flex items-center justify-center gap-2 bg-luxury-900 hover:bg-gold text-white px-6 py-3 rounded-xl font-medium transition-colors whitespace-nowrap"
+                          >
+                            Find In-Store / Online <ExternalLink size={16} />
+                          </a>
                         ) : (
-                          ((region === 'UK' ? dupe.uk_affiliate_link : dupe.affiliate_link) || dupe.affiliate_link || getFallbackUrl(dupe.brand, dupe.name, region)) ? (
                           <a 
                             href={(region === 'UK' ? dupe.uk_affiliate_link : dupe.affiliate_link) || dupe.affiliate_link || getFallbackUrl(dupe.brand, dupe.name, region)}
                             target="_blank"
@@ -907,11 +945,6 @@ function App() {
                           >
                             Buy Dupe <ExternalLink size={16} />
                           </a>
-                        ) : (
-                          <button disabled className="w-full flex items-center justify-center gap-2 bg-gray-100 text-gray-400 px-6 py-3 rounded-xl font-medium cursor-not-allowed whitespace-nowrap">
-                            Out of Stock Online
-                          </button>
-                        )
                         )}
                       </div>
                     </div>
