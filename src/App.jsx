@@ -23,6 +23,9 @@ function App() {
     setSearchTerm('');
     setError(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (window.history.state && window.history.state.view !== 'home') {
+      window.history.pushState({ view: 'home' }, '', '');
+    }
   };
   
 
@@ -517,7 +520,7 @@ function App() {
   });
 
   return (
-    <div className="min-h-screen bg-luxury-50 text-luxury-950 font-sans selection:bg-gold-light selection:text-luxury-950 overflow-x-hidden w-full">
+    <div className="min-h-screen bg-luxury-50 text-luxury-950 font-sans selection:bg-gold-light selection:text-luxury-950 w-full">
       <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
       <RequestModal isOpen={showRequestModal} onClose={() => setShowRequestModal(false)} />
       <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} userId={session?.user?.id} />
@@ -534,84 +537,92 @@ function App() {
         />
       )}
       
-      {/* Navigation */}
-      <nav className="px-4 py-3 sm:px-6 sm:py-5 flex justify-between items-center max-w-5xl mx-auto w-full">
-        <div 
-          onClick={resetToHome}
-          className="flex items-center gap-1.5 sm:gap-2 cursor-pointer group select-none flex-shrink-0"
-          title="Return to Home"
-        >
-          <Sparkles className="text-gold group-hover:rotate-12 transition-transform w-5 h-5 sm:w-6 sm:h-6" />
-          <span className="font-serif font-bold text-luxury-900 tracking-wide text-base sm:text-xl">
-            Scents for Cents
-          </span>
-        </div>
-        <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-          
-          {/* Region Toggle */}
-          <div className="flex bg-luxury-100 rounded-full p-0.5 sm:p-1 border border-luxury-200">
-            <button 
-              onClick={() => setRegion('IE')}
-              className={`px-2 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-bold transition-colors ${region === 'IE' ? 'bg-white shadow text-luxury-900' : 'text-luxury-500 hover:text-luxury-700'}`}
-              title="Switch to Euro"
-            >
-              <span className="sm:hidden">€</span>
-              <span className="hidden sm:inline">€ EUR</span>
-            </button>
-            <button 
-              onClick={() => setRegion('UK')}
-              className={`px-2 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-bold transition-colors ${region === 'UK' ? 'bg-white shadow text-luxury-900' : 'text-luxury-500 hover:text-luxury-700'}`}
-              title="Switch to British Pound"
-            >
-              <span className="sm:hidden">£</span>
-              <span className="hidden sm:inline">£ GBP</span>
-            </button>
-          </div>
-          {session ? (
-            <div className="flex items-center gap-1.5 sm:gap-2">
-              {profile?.tier === 'premium' && (
-                <button 
-                  onClick={() => setShowSubscriptionModal(true)}
-                  className="bg-gold/15 hover:bg-gold/25 text-luxury-900 border border-gold/40 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold flex items-center gap-1 transition-colors shadow-xs"
-                  title="Manage or Cancel Subscription"
-                >
-                  <Sparkles size={12} className="text-gold" />
-                  <span className="hidden sm:inline">Premium</span>
-                  <span className="text-[10px] text-luxury-500 font-medium underline">Manage</span>
-                </button>
-              )}
+      {/* Sticky Navigation Header */}
+      <header className="sticky top-0 z-40 bg-luxury-50/95 backdrop-blur-md border-b border-luxury-200/60 shadow-xs transition-all">
+        <nav className="px-4 py-3 sm:px-6 sm:py-4 flex justify-between items-center max-w-5xl mx-auto w-full">
+          <button 
+            type="button"
+            onClick={resetToHome}
+            className="flex items-center gap-1.5 sm:gap-2 cursor-pointer group select-none flex-shrink-0 text-left py-1 px-1 -my-1 -mx-1 rounded-lg active:scale-95 transition-transform focus:outline-none"
+            title="Return to Home"
+            aria-label="Return to Scents for Cents Home"
+          >
+            <Sparkles className="text-gold group-hover:rotate-12 transition-transform w-5 h-5 sm:w-6 sm:h-6" />
+            <span className="font-serif font-bold text-luxury-900 tracking-wide text-base sm:text-xl">
+              Scents for Cents
+            </span>
+          </button>
+          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+            
+            {/* Region Toggle */}
+            <div className="flex bg-luxury-100 rounded-full p-0.5 sm:p-1 border border-luxury-200">
               <button 
-                onClick={() => supabase.auth.signOut()}
-                className="text-luxury-600 hover:text-luxury-900 text-xs sm:text-sm font-medium flex items-center gap-1 p-1 sm:px-2"
-                title="Sign Out"
+                onClick={() => setRegion('IE')}
+                className={`px-2 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-bold transition-colors ${region === 'IE' ? 'bg-white shadow text-luxury-900' : 'text-luxury-500 hover:text-luxury-700'}`}
+                title="Switch to Euro"
               >
-                <User className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                <span className="hidden sm:inline">Sign Out</span>
+                <span className="sm:hidden">€</span>
+                <span className="hidden sm:inline">€ EUR</span>
+              </button>
+              <button 
+                onClick={() => setRegion('UK')}
+                className={`px-2 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-bold transition-colors ${region === 'UK' ? 'bg-white shadow text-luxury-900' : 'text-luxury-500 hover:text-luxury-700'}`}
+                title="Switch to British Pound"
+              >
+                <span className="sm:hidden">£</span>
+                <span className="hidden sm:inline">£ GBP</span>
               </button>
             </div>
-          ) : (
+            {session ? (
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                {profile?.tier === 'premium' && (
+                  <button 
+                    onClick={() => setShowSubscriptionModal(true)}
+                    className="bg-gold/15 hover:bg-gold/25 text-luxury-900 border border-gold/40 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold flex items-center gap-1 transition-colors shadow-xs"
+                    title="Manage or Cancel Subscription"
+                  >
+                    <Sparkles size={12} className="text-gold" />
+                    <span className="hidden sm:inline">Premium</span>
+                    <span className="text-[10px] text-luxury-500 font-medium underline">Manage</span>
+                  </button>
+                )}
+                <button 
+                  onClick={() => supabase.auth.signOut()}
+                  className="text-luxury-600 hover:text-luxury-900 text-xs sm:text-sm font-medium flex items-center gap-1 p-1 sm:px-2"
+                  title="Sign Out"
+                >
+                  <User className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  <span className="hidden sm:inline">Sign Out</span>
+                </button>
+              </div>
+            ) : (
+              <button 
+                onClick={() => setShowAuthModal(true)}
+                className="text-luxury-600 hover:text-luxury-900 text-xs sm:text-sm font-medium flex items-center gap-1 px-2.5 py-1.5 rounded-full hover:bg-luxury-100 transition-colors"
+              >
+                <User className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <span>Sign In</span>
+              </button>
+            )}
             <button 
-              onClick={() => setShowAuthModal(true)}
-              className="text-luxury-600 hover:text-luxury-900 text-xs sm:text-sm font-medium flex items-center gap-1 px-2.5 py-1.5 rounded-full hover:bg-luxury-100 transition-colors"
+              onClick={handleDownloadClick}
+              className="hidden sm:inline-flex bg-luxury-900 text-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium hover:bg-gold transition-colors shadow-sm whitespace-nowrap"
             >
-              <User className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              <span>Sign In</span>
+              Download App
             </button>
-          )}
-          <button 
-            onClick={handleDownloadClick}
-            className="hidden sm:inline-flex bg-luxury-900 text-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium hover:bg-gold transition-colors shadow-sm whitespace-nowrap"
-          >
-            Download App
-          </button>
-        </div>
-      </nav>
+          </div>
+        </nav>
+      </header>
 
       {/* Hero Section */}
       <main className="flex flex-col items-center pt-4 pb-24 px-4 max-w-5xl mx-auto">
         
         <div className="text-center mb-8 sm:mb-10 max-w-3xl">
-          <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl text-luxury-900 mb-3 sm:mb-4 leading-tight flex items-center justify-center gap-3">
+          <h1 
+            onClick={resetToHome}
+            className="font-serif text-3xl sm:text-5xl md:text-6xl text-luxury-900 mb-3 sm:mb-4 leading-tight flex items-center justify-center gap-3 cursor-pointer select-none active:scale-98 transition-transform"
+            title="Return to Home"
+          >
             Scents for Cents
           </h1>
           <h2 className="font-serif text-2xl sm:text-4xl md:text-5xl text-luxury-800 mb-4 sm:mb-6 leading-tight">
