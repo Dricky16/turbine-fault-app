@@ -517,7 +517,7 @@ function App() {
   });
 
   return (
-    <div className="min-h-screen bg-luxury-50 text-luxury-950 font-sans selection:bg-gold-light selection:text-luxury-950">
+    <div className="min-h-screen bg-luxury-50 text-luxury-950 font-sans selection:bg-gold-light selection:text-luxury-950 overflow-x-hidden w-full">
       <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
       <RequestModal isOpen={showRequestModal} onClose={() => setShowRequestModal(false)} />
       <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} userId={session?.user?.id} />
@@ -535,67 +535,72 @@ function App() {
       )}
       
       {/* Navigation */}
-      <nav className="p-6 flex justify-between items-center max-w-5xl mx-auto">
+      <nav className="px-4 py-3 sm:px-6 sm:py-5 flex justify-between items-center max-w-5xl mx-auto w-full">
         <div 
           onClick={resetToHome}
-          className="flex items-center gap-2 cursor-pointer group select-none"
+          className="flex items-center gap-1.5 sm:gap-2 cursor-pointer group select-none flex-shrink-0"
           title="Return to Home"
         >
-          <Sparkles className="text-gold group-hover:rotate-12 transition-transform" size={24} />
-          <span className="font-serif font-bold text-luxury-900 tracking-wide text-lg sm:text-xl">
+          <Sparkles className="text-gold group-hover:rotate-12 transition-transform w-5 h-5 sm:w-6 sm:h-6" />
+          <span className="font-serif font-bold text-luxury-900 tracking-wide text-base sm:text-xl">
             Scents for Cents
           </span>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
           
           {/* Region Toggle */}
-          <div className="flex bg-luxury-100 rounded-full p-1 mr-2 border border-luxury-200">
+          <div className="flex bg-luxury-100 rounded-full p-0.5 sm:p-1 border border-luxury-200">
             <button 
               onClick={() => setRegion('IE')}
-              className={`px-3 py-1 rounded-full text-xs font-bold transition-colors ${region === 'IE' ? 'bg-white shadow text-luxury-900' : 'text-luxury-500 hover:text-luxury-700'}`}
+              className={`px-2 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-bold transition-colors ${region === 'IE' ? 'bg-white shadow text-luxury-900' : 'text-luxury-500 hover:text-luxury-700'}`}
+              title="Switch to Euro"
             >
-              € EUR
+              <span className="sm:hidden">€</span>
+              <span className="hidden sm:inline">€ EUR</span>
             </button>
             <button 
               onClick={() => setRegion('UK')}
-              className={`px-3 py-1 rounded-full text-xs font-bold transition-colors ${region === 'UK' ? 'bg-white shadow text-luxury-900' : 'text-luxury-500 hover:text-luxury-700'}`}
+              className={`px-2 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-bold transition-colors ${region === 'UK' ? 'bg-white shadow text-luxury-900' : 'text-luxury-500 hover:text-luxury-700'}`}
+              title="Switch to British Pound"
             >
-              £ GBP
+              <span className="sm:hidden">£</span>
+              <span className="hidden sm:inline">£ GBP</span>
             </button>
           </div>
           {session ? (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2">
               {profile?.tier === 'premium' && (
                 <button 
                   onClick={() => setShowSubscriptionModal(true)}
-                  className="bg-gold/15 hover:bg-gold/25 text-luxury-900 border border-gold/40 px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 transition-colors shadow-xs"
+                  className="bg-gold/15 hover:bg-gold/25 text-luxury-900 border border-gold/40 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold flex items-center gap-1 transition-colors shadow-xs"
                   title="Manage or Cancel Subscription"
                 >
-                  <Sparkles size={13} className="text-gold" />
-                  <span>Premium</span>
+                  <Sparkles size={12} className="text-gold" />
+                  <span className="hidden sm:inline">Premium</span>
                   <span className="text-[10px] text-luxury-500 font-medium underline">Manage</span>
                 </button>
               )}
               <button 
                 onClick={() => supabase.auth.signOut()}
-                className="text-luxury-600 hover:text-luxury-900 text-sm font-medium flex items-center gap-1.5"
+                className="text-luxury-600 hover:text-luxury-900 text-xs sm:text-sm font-medium flex items-center gap-1 p-1 sm:px-2"
+                title="Sign Out"
               >
-                <User className="w-4 h-4" />
-                Sign Out
+                <User className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Sign Out</span>
               </button>
             </div>
           ) : (
             <button 
               onClick={() => setShowAuthModal(true)}
-              className="text-luxury-600 hover:text-luxury-900 text-sm font-medium flex items-center gap-2"
+              className="text-luxury-600 hover:text-luxury-900 text-xs sm:text-sm font-medium flex items-center gap-1 px-2.5 py-1.5 rounded-full hover:bg-luxury-100 transition-colors"
             >
-              <User className="w-4 h-4" />
-              Sign In
+              <User className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <span>Sign In</span>
             </button>
           )}
           <button 
             onClick={handleDownloadClick}
-            className="bg-luxury-900 text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-gold transition-colors shadow-sm"
+            className="hidden sm:inline-flex bg-luxury-900 text-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium hover:bg-gold transition-colors shadow-sm whitespace-nowrap"
           >
             Download App
           </button>
@@ -605,15 +610,15 @@ function App() {
       {/* Hero Section */}
       <main className="flex flex-col items-center pt-4 pb-24 px-4 max-w-5xl mx-auto">
         
-        <div className="text-center mb-10 max-w-3xl">
-          <h1 className="font-serif text-5xl md:text-6xl text-luxury-900 mb-4 leading-tight flex items-center justify-center gap-4">
+        <div className="text-center mb-8 sm:mb-10 max-w-3xl">
+          <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl text-luxury-900 mb-3 sm:mb-4 leading-tight flex items-center justify-center gap-3">
             Scents for Cents
           </h1>
-          <h2 className="font-serif text-4xl md:text-5xl text-luxury-800 mb-6 leading-tight">
+          <h2 className="font-serif text-2xl sm:text-4xl md:text-5xl text-luxury-800 mb-4 sm:mb-6 leading-tight">
             Luxury Fragrances, <br/>
             <span className="italic text-gold-dark">Without the Premium Price.</span>
           </h2>
-          <p className="text-luxury-700 text-lg md:text-xl font-light max-w-2xl mx-auto">
+          <p className="text-luxury-700 text-base sm:text-lg md:text-xl font-light max-w-2xl mx-auto px-2">
             Search for your favorite high-end designer perfume, and we'll reveal the closest, most affordable clones and dupes.
           </p>
         </div>
@@ -621,24 +626,24 @@ function App() {
         {/* Search Bar */}
         <form onSubmit={handleSearch} className="w-full max-w-2xl relative mb-4">
           <div className="relative flex items-center shadow-sm rounded-full overflow-hidden border border-luxury-200 bg-white focus-within:ring-2 focus-within:ring-gold focus-within:border-gold transition-all">
-            <div className="pl-6 text-luxury-400">
-              <Search size={24} />
+            <div className="pl-4 sm:pl-6 text-luxury-400">
+              <Search size={22} className="sm:w-6 sm:h-6" />
             </div>
             <input 
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="e.g. Baccarat Rouge 540"
-              className="w-full text-lg py-5 pl-4 pr-16 focus:outline-none bg-transparent placeholder:text-luxury-300 font-medium"
+              className="w-full text-base sm:text-lg py-4 sm:py-5 pl-3 sm:pl-4 pr-12 sm:pr-16 focus:outline-none bg-transparent placeholder:text-luxury-300 font-medium"
             />
             {/* Premium Camera Button inside Search */}
             <button 
               type="button"
               onClick={handleCameraClick}
-              className="absolute right-2 p-3 text-luxury-400 hover:text-gold hover:bg-luxury-50 rounded-full transition-colors flex items-center group tooltip-trigger"
+              className="absolute right-1.5 sm:right-2 p-2 sm:p-3 text-luxury-400 hover:text-gold hover:bg-luxury-50 rounded-full transition-colors flex items-center group tooltip-trigger"
               title="Scan a bottle (Premium)"
             >
-              <Camera size={24} />
+              <Camera size={22} className="sm:w-6 sm:h-6" />
             </button>
           </div>
         </form>
@@ -648,25 +653,25 @@ function App() {
           
           {!hasSearched && !loading && (
             <div className="w-full animate-in fade-in duration-500">
-              <div className="flex flex-col sm:flex-row items-center justify-between mb-8 pb-4 border-b border-luxury-200">
-                <h3 className="font-serif text-3xl text-luxury-900 font-bold mb-4 sm:mb-0">Available Scents</h3>
-                <div className="flex items-center gap-4">
-                  <div className="relative">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-6 sm:mb-8 pb-4 border-b border-luxury-200">
+                <h3 className="font-serif text-2xl sm:text-3xl text-luxury-900 font-bold text-center sm:text-left">Available Scents</h3>
+                <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-4">
+                  <div className="relative flex-1 sm:flex-none">
                     <select
                       value={sortMode}
                       onChange={(e) => setSortMode(e.target.value)}
-                      className="appearance-none bg-white border border-luxury-200 text-luxury-800 py-2.5 pl-4 pr-10 rounded-xl font-medium focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold cursor-pointer"
+                      className="w-full sm:w-auto appearance-none bg-white border border-luxury-200 text-luxury-800 text-xs sm:text-sm py-2 sm:py-2.5 pl-3 sm:pl-4 pr-8 sm:pr-10 rounded-xl font-medium focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold cursor-pointer"
                     >
                       <option value="name-asc">A-Z (Name)</option>
                       <option value="brand-asc">A-Z (Brand)</option>
                       <option value="price-asc">Price (Low to High)</option>
                       <option value="price-desc">Price (High to Low)</option>
                     </select>
-                    <Filter className="absolute right-3 top-1/2 -translate-y-1/2 text-luxury-400 pointer-events-none" size={16} />
+                    <Filter className="absolute right-2.5 sm:right-3 top-1/2 -translate-y-1/2 text-luxury-400 pointer-events-none" size={14} />
                   </div>
                   <button 
                     onClick={() => setShowRequestModal(true)}
-                    className="bg-luxury-900 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-gold transition-colors shadow-sm whitespace-nowrap"
+                    className="bg-luxury-900 text-white px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold hover:bg-gold transition-colors shadow-sm whitespace-nowrap flex-shrink-0"
                   >
                     Request Scent
                   </button>
@@ -792,7 +797,7 @@ function App() {
             <div className="animate-in fade-in slide-in-from-bottom-8 duration-500">
               
               {/* Back Navigation Bar for iPhone / Mobile */}
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center justify-between mb-6 gap-2">
                 <button 
                   onClick={() => {
                     if (searchResultsList && searchResultsList.length > 1) {
@@ -802,21 +807,22 @@ function App() {
                       resetToHome();
                     }
                   }}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-luxury-200 hover:border-gold text-luxury-900 rounded-full text-sm font-semibold shadow-sm transition-all hover:shadow"
+                  className="inline-flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-5 py-2 sm:py-2.5 bg-white border border-luxury-200 hover:border-gold text-luxury-900 rounded-full text-xs sm:text-sm font-semibold shadow-sm transition-all hover:shadow truncate"
                 >
-                  <ArrowLeft size={18} /> {searchResultsList && searchResultsList.length > 1 ? 'Back to Search Results' : 'Back to All Fragrances'}
+                  <ArrowLeft size={16} className="flex-shrink-0" /> 
+                  <span className="truncate">{searchResultsList && searchResultsList.length > 1 ? 'Back to Search Results' : 'Back to All Fragrances'}</span>
                 </button>
                 
                 <button
                   onClick={resetToHome}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-luxury-600 hover:text-luxury-900 px-4 py-2 rounded-full hover:bg-luxury-100 transition-colors bg-white border border-luxury-200"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-luxury-600 hover:text-luxury-900 px-3 sm:px-4 py-2 rounded-full hover:bg-luxury-100 transition-colors bg-white border border-luxury-200 flex-shrink-0"
                 >
                   <Home size={14} /> Home
                 </button>
               </div>
               
               {/* Original Perfume Header */}
-              <div className="bg-white rounded-3xl p-8 mb-8 shadow-sm border border-luxury-100 flex flex-col sm:flex-row items-center sm:items-start gap-6 relative overflow-hidden">
+              <div className="bg-white rounded-3xl p-5 sm:p-8 mb-8 shadow-sm border border-luxury-100 flex flex-col sm:flex-row items-center sm:items-start gap-5 sm:gap-6 relative overflow-hidden">
                 <div className="w-32 h-32 bg-luxury-50 rounded-2xl border border-luxury-100 flex items-center justify-center flex-shrink-0 overflow-hidden shadow-xs">
                   <FragranceImage 
                     src={original.image_url} 
@@ -885,7 +891,7 @@ function App() {
               ) : (
                 <div className="space-y-4">
                   {filteredDupes.map((dupe, index) => (
-                    <div key={dupe.id} className="group bg-white hover:bg-luxury-50 border border-luxury-200 rounded-2xl p-6 transition-all duration-300 hover:shadow-md flex flex-col sm:flex-row gap-6 items-center sm:items-stretch relative overflow-hidden">
+                    <div key={dupe.id} className="group bg-white hover:bg-luxury-50 border border-luxury-200 rounded-2xl p-4 sm:p-6 transition-all duration-300 hover:shadow-md flex flex-col sm:flex-row gap-4 sm:gap-6 items-center sm:items-stretch relative overflow-hidden">
                       
                       {/* Top Match Badge */}
                       {index === 0 && (
@@ -973,11 +979,12 @@ function App() {
               </span>
             </div>
             
-            <div className="flex flex-wrap justify-center gap-6 text-sm text-luxury-500 font-medium">
+            <div className="flex flex-wrap justify-center gap-4 sm:gap-6 text-sm text-luxury-500 font-medium">
               <button onClick={() => setLegalModalType('about')} className="hover:text-gold transition-colors">About Us</button>
               <button onClick={() => setLegalModalType('disclosure')} className="hover:text-gold transition-colors">Affiliate Disclosure</button>
               <button onClick={() => setLegalModalType('privacy')} className="hover:text-gold transition-colors">Privacy Policy</button>
               <button onClick={() => setLegalModalType('terms')} className="hover:text-gold transition-colors">Terms of Service</button>
+              <button onClick={handleDownloadClick} className="hover:text-gold transition-colors">Install App</button>
               {session && profile?.tier === 'premium' && (
                 <button onClick={() => setShowSubscriptionModal(true)} className="text-rose-600 hover:text-rose-800 transition-colors font-semibold">
                   Cancel Subscription
