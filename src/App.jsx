@@ -8,6 +8,7 @@ import RequestModal from './RequestModal';
 import { Filter } from 'lucide-react';
 import LegalModal from './LegalModal';
 import SubscriptionModal from './SubscriptionModal';
+import FragranceImage from './FragranceImage';
 
 function App() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -682,11 +683,13 @@ function App() {
                     className="bg-white border border-luxury-200 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-gold transition-all cursor-pointer text-center flex flex-col items-center justify-between group"
                   >
                     <div className="w-24 h-24 mb-4 bg-luxury-50 rounded-xl border border-luxury-100 flex items-center justify-center overflow-hidden flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
-                      {perfume.image_url ? (
-                        <img src={perfume.image_url} alt={perfume.name} className="w-full h-full object-cover" />
-                      ) : (
-                        <Sparkles className="text-luxury-300" size={32} />
-                      )}
+                      <FragranceImage 
+                        src={perfume.image_url} 
+                        alt={perfume.name} 
+                        brand={perfume.brand} 
+                        name={perfume.name} 
+                        iconSize={26} 
+                      />
                     </div>
                     <div className="w-full">
                       <h4 className="font-serif text-lg font-bold text-luxury-900 mb-1">{perfume.name}</h4>
@@ -744,15 +747,15 @@ function App() {
                     onClick={() => selectPerfume(perfume)}
                     className="group cursor-pointer border border-luxury-100 rounded-2xl p-6 flex flex-col items-center text-center hover:border-gold hover:shadow-md transition-all bg-luxury-50"
                   >
-                    {perfume.image_url ? (
-                      <div className="h-32 w-24 mb-4 relative overflow-hidden">
-                        <img src={perfume.image_url} alt={perfume.name} className="object-contain w-full h-full mix-blend-multiply group-hover:scale-105 transition-transform" />
-                      </div>
-                    ) : (
-                      <div className="h-32 w-24 mb-4 flex items-center justify-center bg-white rounded-lg border border-luxury-100">
-                        <Sparkles className="text-gold w-8 h-8 opacity-50" />
-                      </div>
-                    )}
+                    <div className="h-32 w-24 mb-4 relative overflow-hidden flex items-center justify-center rounded-xl border border-luxury-100 bg-white">
+                      <FragranceImage 
+                        src={perfume.image_url} 
+                        alt={perfume.name} 
+                        brand={perfume.brand} 
+                        name={perfume.name} 
+                        iconSize={28} 
+                      />
+                    </div>
                     <span className="text-luxury-500 text-xs tracking-widest uppercase mb-1">{perfume.brand}</span>
                     <h3 className="font-serif text-lg text-luxury-900 leading-tight mb-2">{perfume.name}</h3>
                     {perfume.price && <span className="font-bold text-luxury-900">{formatPrice(perfume.price)}</span>}
@@ -814,12 +817,14 @@ function App() {
               
               {/* Original Perfume Header */}
               <div className="bg-white rounded-3xl p-8 mb-8 shadow-sm border border-luxury-100 flex flex-col sm:flex-row items-center sm:items-start gap-6 relative overflow-hidden">
-                <div className="w-32 h-32 bg-luxury-50 rounded-2xl border border-luxury-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                   {original.image_url ? (
-                     <img src={original.image_url} alt={original.name} className="w-full h-full object-cover" />
-                   ) : (
-                     <Sparkles className="text-luxury-300" size={40} />
-                   )}
+                <div className="w-32 h-32 bg-luxury-50 rounded-2xl border border-luxury-100 flex items-center justify-center flex-shrink-0 overflow-hidden shadow-xs">
+                  <FragranceImage 
+                    src={original.image_url} 
+                    alt={original.name} 
+                    brand={original.brand} 
+                    name={original.name} 
+                    iconSize={36} 
+                  />
                 </div>
                 <div className="text-center sm:text-left flex-1 w-full">
                   <div className="inline-block px-3 py-1 bg-luxury-100 text-luxury-700 text-xs font-bold tracking-wider uppercase rounded-full mb-3">Original</div>
@@ -888,12 +893,14 @@ function App() {
                       )}
 
                       {/* Dupe Image */}
-                      <div className="w-24 h-24 sm:w-28 sm:h-28 bg-luxury-50 rounded-xl border border-luxury-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                         {dupe.image_url ? (
-                           <img src={dupe.image_url} alt={dupe.name} className="w-full h-full object-cover" />
-                         ) : (
-                           <Sparkles className="text-luxury-300" size={32} />
-                         )}
+                      <div className="w-24 h-24 sm:w-28 sm:h-28 bg-luxury-50 rounded-xl border border-luxury-100 flex items-center justify-center flex-shrink-0 overflow-hidden shadow-xs">
+                        <FragranceImage 
+                          src={dupe.image_url} 
+                          alt={dupe.name} 
+                          brand={dupe.brand} 
+                          name={dupe.name} 
+                          iconSize={28} 
+                        />
                       </div>
 
                       <div className="flex-1 text-center sm:text-left w-full">
