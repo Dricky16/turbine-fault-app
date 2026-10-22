@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Sparkles, ExternalLink, Camera, ArrowRight, ArrowLeft, Home, ShieldCheck, Percent, Tag, User, Heart } from 'lucide-react';
+import { Search, Sparkles, ExternalLink, Camera, ArrowRight, ArrowLeft, Home, ShieldCheck, Percent, Tag, User, Heart, Store, MapPin, Info } from 'lucide-react';
 import AuthModal from './AuthModal';
 import PaywallModal from './PaywallModal';
 import { supabase } from './supabaseClient';
@@ -44,6 +44,12 @@ function App() {
     } else {
       return !usOnlyBrands.some(us => brand.includes(us));
     }
+  }).sort((a, b) => {
+    const isSupermarketA = ['aldi', 'lidl'].some(s => (a.brand || '').toLowerCase().includes(s));
+    const isSupermarketB = ['aldi', 'lidl'].some(s => (b.brand || '').toLowerCase().includes(s));
+    if (isSupermarketA && !isSupermarketB) return 1;
+    if (!isSupermarketA && isSupermarketB) return -1;
+    return (b.similarity_match || 0) - (a.similarity_match || 0);
   });
   const [legalModalType, setLegalModalType] = useState(null);
   const [deferredPrompt, setDeferredPrompt] = useState(null); // 'IE' or 'UK'
@@ -86,6 +92,32 @@ function App() {
 
 
 
+  const ZARA_SLUGS = {
+    'deep garden': 'deep-garden-edp-100-ml---3-38-oz-p20130309.html',
+    'red temptation': 'red-zara-temptation-edp-80-ml---2-71-fl--oz--p20110972.html',
+    'golden decade': 'golden-decade-edp-80-ml---2-71-fl--oz--p20110977.html',
+    'gardenia': 'gardenia-edp-90-ml---3-04-oz-p20120824.html',
+    'rose gourmand': 'rose-gourmand-edp-80ml--2-71-fl--oz---p20110975.html',
+    'applejuice': 'applejuice-edt-90ml---3-04-oz-p20120804.html',
+    'orchid': 'orchid-edp-30-ml---1-01-fl--oz--p20120388.html',
+    'fields at nightfall': 'fields-at-nightfall-intense-parfum-100-ml---3-38-oz-p20130165.html',
+    'vibrant leather': 'vibrant-leather-edp-100-ml---3-38-oz-p20210721.html',
+    'vibrant leather bogoss': 'bogoss-vibrant-leather-edp-100-ml---3-38-oz-p20210917.html',
+    'bogoss vibrant leather': 'bogoss-vibrant-leather-edp-100-ml---3-38-oz-p20210917.html',
+    'sand desert at sunset': 'sand-desert-at-sunset-intense-edp-100-ml---3-38-oz-p20220320.html',
+    'waterlily tea dress': 'waterlily-tea-dress-edp-100ml--3-4-fl-oz---p20110944.html',
+    'tubereuse noir': 'tubereuse-noir-edp-100ml--3-4-fl-oz---p20110928.html',
+    'energetically new york': 'energetically-new-york-edp-100ml--3-4-fl--oz---p20110710.html',
+    'supreme vanilla': 'supreme-vanilla-edp-80-ml-p20110389.html',
+    'cherry smoothie': 'cherry-smoothie-edp-90-ml---3-04-oz-p20120931.html',
+    'nude bouquet': 'nude-bouquet-edp-100-ml---3-38-oz-p20130300.html',
+    'violet blossom': 'violet-blossom-edp-90-ml---3-04-oz-p20120927.html',
+    'vetiver pamplemousse': 'vetiver-pamplemousse-edp-100ml--3-4-fl--oz--p20110929.html',
+    'pink flambe': 'pink-flambe-edt-90-ml---3-04-oz-p20120471.html',
+    'seoul': 'seoul-summer-edt-100-ml---3-38-oz-p20210298.html',
+    'tobacco collection rich warm addictive': 'tobacco-01-edt-100-ml---3-38-oz-p20210915.html'
+  };
+
   const getFallbackUrl = (brand, name, region) => {
     const b = (brand || '').toLowerCase().trim();
     const n = (name || '').trim();
@@ -95,7 +127,11 @@ function App() {
 
     if (b.includes('zara')) {
       const zaraRegion = region === 'US' ? 'us/en' : (region === 'UK' ? 'uk/en' : 'ie/en');
-      return `https://www.zara.com/${zaraRegion}/search?searchTerm=${encodeURIComponent(cleanName)}`;
+      const slug = ZARA_SLUGS[cleanName.toLowerCase()];
+      if (slug) {
+        return `https://www.zara.com/${zaraRegion}/${slug}`;
+      }
+      return `https://www.zara.com/${zaraRegion}/w-fragrances-l1396.html`;
     }
 
     if (b.includes('marks & spencer') || b.includes('m&s')) {
@@ -104,9 +140,12 @@ function App() {
         : `https://www.marksandspencer.com/search?searchTerm=${encodeURIComponent(cleanName + ' perfume')}`;
     }
 
-    if (b.includes('aldi') || b.includes('lidl')) {
-      const regLabel = region === 'UK' ? 'UK' : 'Ireland';
-      return `https://www.google.com/search?q=${encodeURIComponent('Buy ' + brand + ' ' + cleanName + ' perfume ' + regLabel)}`;
+    if (b.includes('aldi')) {
+      return region === 'UK' ? 'https://www.aldi.co.uk/store-finder' : 'https://stores.aldi.ie/';
+    }
+
+    if (b.includes('lidl')) {
+      return region === 'UK' ? 'https://www.lidl.co.uk/c/store-finder/s10023403' : 'https://www.lidl.ie/c/store-finder/s10023403';
     }
 
     if (b.includes('dossier')) {
@@ -980,11 +1019,27 @@ function App() {
                               Save {formatPrice(parseFloat(original.price) - parseFloat(dupe.price))}
                             </div>
                           )}
+
+                          {/* Supermarket In-Store Badge */}
+                          {['Aldi', 'Lidl'].some(s => (dupe.brand || '').toLowerCase().includes(s.toLowerCase())) && (
+                            <div className="flex items-center gap-1.5 bg-amber-50 text-amber-900 px-3 py-1.5 rounded-lg text-sm font-semibold border border-amber-200">
+                              <Store size={16} className="text-amber-700" />
+                              In-Store Specialbuy
+                            </div>
+                          )}
                         </div>
 
                         {dupe.notes && (
                           <div className="bg-white p-3 rounded-xl border border-luxury-100 text-left">
                             <p className="text-xs text-luxury-800"><span className="font-bold">Notes:</span> {dupe.notes}</p>
+                          </div>
+                        )}
+
+                        {['Aldi', 'Lidl'].some(s => (dupe.brand || '').toLowerCase().includes(s.toLowerCase())) && (
+                          <div className="bg-amber-50/80 border border-amber-200/80 p-3 rounded-xl text-left mt-2">
+                            <p className="text-xs text-amber-950 leading-relaxed">
+                              <span className="font-bold">🛒 Physical Store Only:</span> Aldi & Lidl scents are released seasonally in supermarket aisles (€6–€7) and are not sold online. Check your local branch or shop available online alternatives.
+                            </p>
                           </div>
                         )}
                       </div>
@@ -993,15 +1048,25 @@ function App() {
                         <div className="text-3xl font-bold text-luxury-900 mb-3">
                           {dupe.price ? formatPrice(dupe.price) : <span className="text-xl font-medium text-luxury-500">Prices vary</span>}
                         </div>
-                        {['Aldi', 'Lidl'].includes(dupe.brand) ? (
-                          <a 
-                            href={(region === 'UK' ? dupe.uk_affiliate_link : dupe.affiliate_link) || dupe.affiliate_link || getFallbackUrl(dupe.brand, dupe.name, region)}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="w-full flex items-center justify-center gap-2 bg-luxury-900 hover:bg-gold text-white px-6 py-3 rounded-xl font-medium transition-colors whitespace-nowrap"
-                          >
-                            Find In-Store / Online <ExternalLink size={16} />
-                          </a>
+                        {['Aldi', 'Lidl'].some(s => (dupe.brand || '').toLowerCase().includes(s.toLowerCase())) ? (
+                          <div className="w-full flex flex-col items-center">
+                            <a 
+                              href={(region === 'UK' ? dupe.uk_affiliate_link : dupe.affiliate_link) || dupe.affiliate_link || getFallbackUrl(dupe.brand, dupe.name, region)}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="w-full flex items-center justify-center gap-2 bg-luxury-900 hover:bg-gold text-white px-6 py-3 rounded-xl font-medium transition-colors whitespace-nowrap"
+                            >
+                              Find Local Store <MapPin size={16} />
+                            </a>
+                            <a
+                              href={`https://www.google.com/search?q=${encodeURIComponent('Buy ' + dupe.brand + ' ' + dupe.name + ' perfume')}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-xs text-luxury-500 hover:text-luxury-900 underline mt-2 block text-center"
+                            >
+                              Search Resellers (eBay / Google)
+                            </a>
+                          </div>
                         ) : (
                           <a 
                             href={(region === 'UK' ? dupe.uk_affiliate_link : dupe.affiliate_link) || dupe.affiliate_link || getFallbackUrl(dupe.brand, dupe.name, region)}
