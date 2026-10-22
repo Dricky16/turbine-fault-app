@@ -100,8 +100,8 @@ function App() {
 
     if (b.includes('marks & spencer') || b.includes('m&s')) {
       return region === 'IE'
-        ? `https://www.marksandspencer.com/ie/search?q=${encodeURIComponent(cleanName + ' perfume')}`
-        : `https://www.marksandspencer.com/search?q=${encodeURIComponent(cleanName + ' perfume')}`;
+        ? `https://www.marksandspencer.com/ie/search?searchTerm=${encodeURIComponent(cleanName + ' perfume')}`
+        : `https://www.marksandspencer.com/search?searchTerm=${encodeURIComponent(cleanName + ' perfume')}`;
     }
 
     if (b.includes('aldi') || b.includes('lidl')) {
