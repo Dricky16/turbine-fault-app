@@ -154,7 +154,12 @@ function App() {
     }
   };
   const [error, setError] = useState(null);
-  const [allPerfumes, setAllPerfumes] = useState([]);
+  const PAGE_SIZE = 18;
+  const [homePerfumes, setHomePerfumes] = useState([]);
+  const [homePage, setHomePage] = useState(0);
+  const [hasMoreHome, setHasMoreHome] = useState(true);
+  const [homeLoading, setHomeLoading] = useState(true);
+  const [loadingMoreHome, setLoadingMoreHome] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
   const [session, setSession] = useState(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -265,7 +270,53 @@ function App() {
   // Currency state
   const [currency, setCurrency] = useState({ symbol: '€', code: 'EUR', rate: 1 });
 
-  // Detect location and set currency on load
+  const fetchHomePerfumes = async (pageToFetch = 0, currentSort = sortMode, isNewSort = false) => {
+    let orderCol = 'name';
+    let ascending = true;
+    if (currentSort === 'name-asc') {
+      orderCol = 'name';
+      ascending = true;
+    } else if (currentSort === 'brand-asc') {
+      orderCol = 'brand';
+      ascending = true;
+    } else if (currentSort === 'price-asc') {
+      orderCol = 'price';
+      ascending = true;
+    } else if (currentSort === 'price-desc') {
+      orderCol = 'price';
+      ascending = false;
+    }
+
+    const from = pageToFetch * PAGE_SIZE;
+    const to = from + PAGE_SIZE - 1;
+
+    try {
+      const { data, count, error } = await supabase
+        .from('perfumes')
+        .select('id, brand, name, price, image_url', { count: 'exact' })
+        .order(orderCol, { ascending })
+        .range(from, to);
+
+      if (!error && data) {
+        setHomePerfumes(prev => isNewSort ? data : [...prev, ...data]);
+        setHomePage(pageToFetch);
+        setHasMoreHome((from + data.length) < (count || 0));
+      }
+    } catch (err) {
+      console.error("Error loading home perfumes:", err);
+    } finally {
+      setHomeLoading(false);
+      setLoadingMoreHome(false);
+    }
+  };
+
+  const handleSortChange = (newSort) => {
+    setSortMode(newSort);
+    setHomeLoading(true);
+    fetchHomePerfumes(0, newSort, true);
+  };
+
+  // Detect location and set currency on load + fetch first batch of home perfumes
   useEffect(() => {
     fetch('https://ipapi.co/json/')
       .then(res => res.json())
@@ -278,31 +329,9 @@ function App() {
       })
       .catch(err => console.error("GeoIP Error:", err));
       
-    // Fetch all premium perfumes for the home screen
-    const fetchPerfumes = async () => {
-      let allData = [];
-      let page = 0;
-      while (true) {
-        const { data } = await supabase
-          .from('perfumes')
-          .select('*')
-          .order('name', { ascending: true })
-          .range(page * 1000, (page + 1) * 1000 - 1);
-        
-        if (data && data.length > 0) {
-          allData = [...allData, ...data];
-          if (data.length < 1000) break;
-          page++;
-        } else {
-          break;
-        }
-      }
-      setAllPerfumes(allData);
-    };
-    fetchPerfumes();
+    // Fetch only the first 18 perfumes on load
+    fetchHomePerfumes(0, 'name-asc', true);
   }, []);
-
-  const [visibleCount, setVisibleCount] = useState(15);
 
   const formatPrice = (price) => {
     return currency.symbol + (parseFloat(price) * currency.rate).toFixed(2);
@@ -449,7 +478,9 @@ function App() {
   };
 
   const handleLoadMore = () => {
-    setVisibleCount(prev => prev + 15);
+    if (loadingMoreHome || !hasMoreHome) return;
+    setLoadingMoreHome(true);
+    fetchHomePerfumes(homePage + 1, sortMode, false);
   };
 
   const handleCameraClick = () => {
@@ -511,13 +542,6 @@ function App() {
     }
   };
 
-  const sortedPerfumes = [...allPerfumes].sort((a, b) => {
-    if (sortMode === 'name-asc') return a.name.localeCompare(b.name);
-    if (sortMode === 'brand-asc') return a.brand.localeCompare(b.brand);
-    if (sortMode === 'price-asc') return parseFloat(a.price) - parseFloat(b.price);
-    if (sortMode === 'price-desc') return parseFloat(b.price) - parseFloat(a.price);
-    return 0;
-  });
 
   return (
     <div className="min-h-screen bg-luxury-50 text-luxury-950 font-sans selection:bg-gold-light selection:text-luxury-950 w-full">
@@ -670,7 +694,7 @@ function App() {
                   <div className="relative flex-1 sm:flex-none">
                     <select
                       value={sortMode}
-                      onChange={(e) => setSortMode(e.target.value)}
+                      onChange={(e) => handleSortChange(e.target.value)}
                       className="w-full sm:w-auto appearance-none bg-white border border-luxury-200 text-luxury-800 text-xs sm:text-sm py-2 sm:py-2.5 pl-3 sm:pl-4 pr-8 sm:pr-10 rounded-xl font-medium focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold cursor-pointer"
                     >
                       <option value="name-asc">A-Z (Name)</option>
@@ -688,44 +712,62 @@ function App() {
                   </button>
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                {sortedPerfumes.slice(0, visibleCount).map((perfume) => (
-                  <div 
-                    key={perfume.id} 
-                    onClick={() => {
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                      executeSearch(perfume.name);
-                    }}
-                    className="bg-white border border-luxury-200 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-gold transition-all cursor-pointer text-center flex flex-col items-center justify-between group"
-                  >
-                    <div className="w-24 h-24 mb-4 bg-luxury-50 rounded-xl border border-luxury-100 flex items-center justify-center overflow-hidden flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
-                      <FragranceImage 
-                        src={perfume.image_url} 
-                        alt={perfume.name} 
-                        brand={perfume.brand} 
-                        name={perfume.name} 
-                        iconSize={26} 
-                      />
-                    </div>
-                    <div className="w-full">
-                      <h4 className="font-serif text-lg font-bold text-luxury-900 mb-1">{perfume.name}</h4>
-                      <p className="text-luxury-600 text-sm mb-4">by {perfume.brand}</p>
-                    </div>
-                    <div className="text-xl font-semibold text-luxury-900">
-                      {formatPrice(perfume.price)}
-                    </div>
-                  </div>
-                ))}
-              </div>
-              {visibleCount < sortedPerfumes.length && (
-                <div className="mt-10 flex justify-center">
-                  <button 
-                    onClick={handleLoadMore}
-                    className="bg-white border-2 border-luxury-200 text-luxury-800 px-8 py-3 rounded-full font-medium hover:border-gold hover:text-luxury-900 transition-colors"
-                  >
-                    See More Fragrances
-                  </button>
+
+              {homeLoading && homePerfumes.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-16">
+                  <div className="w-8 h-8 border-3 border-luxury-200 border-t-gold rounded-full animate-spin mb-3"></div>
+                  <p className="text-luxury-500 text-sm font-medium animate-pulse">Loading curated collection...</p>
                 </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    {homePerfumes.map((perfume) => (
+                      <div 
+                        key={perfume.id} 
+                        onClick={() => {
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                          executeSearch(perfume.name);
+                        }}
+                        className="bg-white border border-luxury-200 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-gold transition-all cursor-pointer text-center flex flex-col items-center justify-between group"
+                      >
+                        <div className="w-24 h-24 mb-4 bg-luxury-50 rounded-xl border border-luxury-100 flex items-center justify-center overflow-hidden flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
+                          <FragranceImage 
+                            src={perfume.image_url} 
+                            alt={perfume.name} 
+                            brand={perfume.brand} 
+                            name={perfume.name} 
+                            iconSize={26} 
+                          />
+                        </div>
+                        <div className="w-full">
+                          <h4 className="font-serif text-lg font-bold text-luxury-900 mb-1">{perfume.name}</h4>
+                          <p className="text-luxury-600 text-sm mb-4">by {perfume.brand}</p>
+                        </div>
+                        <div className="text-xl font-semibold text-luxury-900">
+                          {formatPrice(perfume.price)}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  {hasMoreHome && (
+                    <div className="mt-10 flex justify-center">
+                      <button 
+                        onClick={handleLoadMore}
+                        disabled={loadingMoreHome}
+                        className="bg-white border-2 border-luxury-200 text-luxury-800 px-8 py-3 rounded-full font-medium hover:border-gold hover:text-luxury-900 transition-colors disabled:opacity-60 flex items-center gap-2"
+                      >
+                        {loadingMoreHome ? (
+                          <>
+                            <div className="w-4 h-4 border-2 border-luxury-400 border-t-luxury-900 rounded-full animate-spin"></div>
+                            <span>Loading more...</span>
+                          </>
+                        ) : (
+                          'See More Fragrances'
+                        )}
+                      </button>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           )}
