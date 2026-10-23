@@ -23,8 +23,17 @@ function App() {
     setSearchTerm('');
     setError(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    if (window.history.state && window.history.state.view !== 'home') {
-      window.history.pushState({ view: 'home' }, '', '');
+    try {
+      const url = new URL(window.location);
+      url.searchParams.delete('p');
+      url.searchParams.delete('perfume');
+      url.searchParams.delete('q');
+      url.searchParams.delete('search');
+      window.history.pushState({ view: 'home' }, '', url.pathname + (url.search ? url.search : ''));
+    } catch (e) {
+      if (window.history.state && window.history.state.view !== 'home') {
+        window.history.pushState({ view: 'home' }, '', '');
+      }
     }
   };
   
@@ -70,6 +79,10 @@ function App() {
           setOriginal(null);
           setDupes([]);
           // searchResultsList remains active
+        } else if (e.state.view === 'perfume' && e.state.perfumeId) {
+          supabase.from('perfumes').select('*').eq('id', e.state.perfumeId).maybeSingle().then(({ data: perf }) => {
+            if (perf) selectPerfume(perf);
+          });
         }
       } else {
         // Fallback: just clear everything and go home
@@ -405,8 +418,25 @@ function App() {
       })
       .catch(err => console.error("GeoIP Error:", err));
       
-    // Fetch only the first 18 perfumes on load
-    fetchHomePerfumes(0, 'name-asc', true);
+    // Check for deep link (?p=<id> or ?q=<search>)
+    const urlParams = new URLSearchParams(window.location.search);
+    const targetPerfumeId = urlParams.get('p') || urlParams.get('perfume');
+    const targetQuery = urlParams.get('q') || urlParams.get('search');
+    
+    if (targetPerfumeId) {
+      supabase.from('perfumes').select('*').eq('id', targetPerfumeId).maybeSingle().then(({ data: perf }) => {
+        if (perf) {
+          selectPerfume(perf);
+        } else {
+          fetchHomePerfumes(0, 'name-asc', true);
+        }
+      });
+    } else if (targetQuery) {
+      executeSearch(targetQuery);
+    } else {
+      // Fetch only the first 18 perfumes on load
+      fetchHomePerfumes(0, 'name-asc', true);
+    }
   }, []);
 
   const formatPrice = (price) => {
@@ -414,7 +444,13 @@ function App() {
   };
 
   const selectPerfume = async (selectedOriginal) => {
-    window.history.pushState({ view: 'perfume' }, '', '');
+    try {
+      const url = new URL(window.location);
+      url.searchParams.set('p', selectedOriginal.id);
+      window.history.pushState({ view: 'perfume', perfumeId: selectedOriginal.id }, '', url.toString());
+    } catch (e) {
+      window.history.pushState({ view: 'perfume' }, '', '');
+    }
     setSearchResultsList([]);
     setLoading(true);
     try {
