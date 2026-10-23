@@ -166,6 +166,32 @@ function App() {
       return `https://www.oakcha.com/search?q=${encodeURIComponent(cleanName)}`;
     }
 
+    if (b.includes('alexandria')) {
+      return region === 'US'
+        ? `https://alexandriafragrances.com/search?type=product&q=${encodeURIComponent(cleanName)}`
+        : `https://alexandriauk.com/search?type=product&q=${encodeURIComponent(cleanName)}`;
+    }
+
+    if (b.includes('montagne')) {
+      return `https://www.montagneparfums.com/search?q=${encodeURIComponent(cleanName)}`;
+    }
+
+    if (b.includes("fine'ry") || b.includes('finery')) {
+      return `https://www.target.com/s?searchTerm=Finery+${encodeURIComponent(cleanName)}`;
+    }
+
+    if (
+      b.includes('maison alhambra') ||
+      b.includes('fragrance world') ||
+      b.includes('paris corner') ||
+      b.includes('spectra') ||
+      b.includes('maison asrar')
+    ) {
+      return region === 'UK'
+        ? `https://www.amazon.co.uk/s?k=${query}`
+        : `https://soghaat.co.uk/search?type=product&q=${query}`;
+    }
+
     if (
       b.includes('ex nihilo') || b.includes('creed') || b.includes('tom ford') ||
       b.includes('xerjoff') || b.includes('maison margiela') || b.includes('byredo') ||
@@ -191,6 +217,17 @@ function App() {
     } else {
       return `https://www.notino.ie/search/?exps=${query}`;
     }
+  };
+
+  const getOutboundUrl = (item) => {
+    if (!item) return '#';
+    if (region === 'UK') {
+      return item.uk_affiliate_link || getFallbackUrl(item.brand, item.name, 'UK');
+    }
+    if (region === 'US') {
+      return getFallbackUrl(item.brand, item.name, 'US');
+    }
+    return item.affiliate_link || getFallbackUrl(item.brand, item.name, 'IE');
   };
   const [error, setError] = useState(null);
   const PAGE_SIZE = 18;
@@ -943,9 +980,9 @@ function App() {
                 {/* Original Buy Button */}
                 <div className="flex flex-col items-center justify-center border-t sm:border-t-0 sm:border-l border-luxury-100 w-full sm:w-auto pt-6 sm:pt-0 sm:pl-8">
                   
-                    {((region === 'UK' ? original.uk_affiliate_link : original.affiliate_link) || original.affiliate_link || getFallbackUrl(original.brand, original.name, region)) ? (
+                    {getOutboundUrl(original) ? (
                       <a 
-                        href={(region === 'UK' ? original.uk_affiliate_link : original.affiliate_link) || original.affiliate_link || getFallbackUrl(original.brand, original.name, region)}
+                        href={getOutboundUrl(original)}
                         target="_blank"
                         rel="noreferrer"
                         className="w-full flex items-center justify-center gap-2 bg-white border-2 border-luxury-900 text-luxury-900 hover:bg-luxury-50 px-6 py-3 rounded-xl font-medium transition-colors whitespace-nowrap mb-3"
@@ -1051,7 +1088,7 @@ function App() {
                         {['Aldi', 'Lidl'].some(s => (dupe.brand || '').toLowerCase().includes(s.toLowerCase())) ? (
                           <div className="w-full flex flex-col items-center">
                             <a 
-                              href={(region === 'UK' ? dupe.uk_affiliate_link : dupe.affiliate_link) || dupe.affiliate_link || getFallbackUrl(dupe.brand, dupe.name, region)}
+                              href={getOutboundUrl(dupe)}
                               target="_blank"
                               rel="noreferrer"
                               className="w-full flex items-center justify-center gap-2 bg-luxury-900 hover:bg-gold text-white px-6 py-3 rounded-xl font-medium transition-colors whitespace-nowrap"
@@ -1069,7 +1106,7 @@ function App() {
                           </div>
                         ) : (
                           <a 
-                            href={(region === 'UK' ? dupe.uk_affiliate_link : dupe.affiliate_link) || dupe.affiliate_link || getFallbackUrl(dupe.brand, dupe.name, region)}
+                            href={getOutboundUrl(dupe)}
                             target="_blank"
                             rel="noreferrer"
                             className="w-full flex items-center justify-center gap-2 bg-luxury-900 hover:bg-gold text-white px-6 py-3 rounded-xl font-medium transition-colors whitespace-nowrap"
